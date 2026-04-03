@@ -263,6 +263,9 @@
     }
     .form-submit:hover { opacity: .9; transform: translateY(-2px); box-shadow: 0 12px 40px rgba(167,139,250,.35); }
     .form-submit:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+    .field-error { border-color: #f87171 !important; box-shadow: 0 0 0 3px rgba(248,113,113,.15) !important; }
+    .error-msg { display: none; font-size: 12px; color: #f87171; margin-top: 6px; font-weight: 500; }
+    .error-msg.visible { display: block; }
 
     /* ─────────────────────────────────────────────
        SUCCESS STATE
@@ -474,11 +477,13 @@
             <div class="form-group">
               <label for="name" class="form-label">Name <span class="req">*</span></label>
               <input type="text" id="name" name="name" class="form-input" placeholder="Your full name" required>
+              <span class="error-msg" id="err-name">Please enter your name so we know who to reply to.</span>
             </div>
 
             <div class="form-group">
               <label for="email" class="form-label">Email <span class="req">*</span></label>
               <input type="email" id="email" name="email" class="form-input" placeholder="you@example.com" required>
+              <span class="error-msg" id="err-email">Please enter a valid email address so our team can get back to you.</span>
             </div>
 
             <div class="form-group">
@@ -498,11 +503,13 @@
                 <option value="lead-form">Enquiry / Lead Capture Page</option>
                 <option value="general">General Inquiry</option>
               </select>
+              <span class="error-msg" id="err-service">Please select a service type.</span>
             </div>
 
             <div class="form-group">
               <label for="description" class="form-label">Project Description <span class="req">*</span></label>
               <textarea id="description" name="description" class="form-textarea form-input" placeholder="Describe what you want to build — the problem it solves, key features, who will use it, any existing tools it should integrate with…" required></textarea>
+              <span class="error-msg" id="err-description">Please describe your project requirements so our team can understand what you need.</span>
             </div>
 
             <div class="form-row form-group">
@@ -760,10 +767,62 @@
     }, { threshold: 0.08 });
     document.querySelectorAll('[data-animate]').forEach(el => io.observe(el));
 
-    // Formspree form
+    // Form validation helpers
+    function showError(fieldId, errId) {
+      var el = document.getElementById(fieldId);
+      el.classList.add('field-error');
+      document.getElementById(errId).classList.add('visible');
+    }
+    function clearError(fieldId, errId) {
+      var el = document.getElementById(fieldId);
+      el.classList.remove('field-error');
+      document.getElementById(errId).classList.remove('visible');
+    }
+    function isValidEmail(val) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim());
+    }
+
+    // Clear errors on input
+    ['name','email','service','description'].forEach(function(id) {
+      document.getElementById(id).addEventListener('input', function() {
+        clearError(id, 'err-' + id);
+      });
+      document.getElementById(id).addEventListener('change', function() {
+        clearError(id, 'err-' + id);
+      });
+    });
+
+    // Formspree form with validation
     document.getElementById('contactForm').addEventListener('submit', function(e) {
       e.preventDefault();
       var form = this;
+
+      // Validate required fields
+      var name = document.getElementById('name').value.trim();
+      var email = document.getElementById('email').value.trim();
+      var service = document.getElementById('service').value;
+      var description = document.getElementById('description').value.trim();
+      var valid = true;
+
+      if (!name) { showError('name', 'err-name'); valid = false; }
+      else { clearError('name', 'err-name'); }
+
+      if (!email || !isValidEmail(email)) { showError('email', 'err-email'); valid = false; }
+      else { clearError('email', 'err-email'); }
+
+      if (!service) { showError('service', 'err-service'); valid = false; }
+      else { clearError('service', 'err-service'); }
+
+      if (!description) { showError('description', 'err-description'); valid = false; }
+      else { clearError('description', 'err-description'); }
+
+      if (!valid) {
+        // Scroll to first error
+        var first = form.querySelector('.field-error');
+        if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
       var btn = document.getElementById('submitBtn');
       btn.disabled = true;
       btn.textContent = 'Sending…';
