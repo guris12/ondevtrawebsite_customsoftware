@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" data-bs-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+  <title>Clock Tree Synthesis (CTS) — Open-Source Flow, Concepts & Commands | Ondevtra</title>
+  <link rel="canonical" href="https://ondevtra.com/cts-clock-tree-synthesis.html" />
+  <meta name="description" content="Learn CTS end-to-end: skew vs insertion delay, buffer selection, H-tree vs clustering, useful skew, and OpenROAD/OpenSTA command recipes. Includes diagrams and practical troubleshooting." />
+            <meta name="keywords" content="clock tree, CTS, timing, OpenROAD, clock skew, buffering, EDA tools, Ondevtra" />
+<meta name="robots" content="index,follow,max-image-preview:large" />
+  <meta name="author" content="Ondevtra AI" />
+
+  <!-- Social -->
+  <meta property="og:title" content="Clock Tree Synthesis (CTS) — Open-Source Flow, Concepts & Commands" />
+  <meta property="og:description" content="A practical guide to CTS using open-source tools. Understand skew, latency, useful skew, and how to drive OpenROAD & OpenSTA with confidence." />
+  <meta property="og:image" content="https://ondevtra.com/assets/img/illustrations/clock_tree_sketch.png" />
+  <meta property="og:url" content="https://ondevtra.com/cts-clock-tree-synthesis.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Ondevtra" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Fonts & base theme already used across site -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vendors/swiper/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css" />
+  <link href="assets/css/theme-v2.min.css?v=1" rel="stylesheet" id="style-default" />
+
+  <!-- Favicons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicons/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicons/favicon-16x16.png" />
+  <link rel="shortcut icon" href="assets/img/favicons/favicon.ico" />
+  <link rel="manifest" href="assets/img/favicons/manifest.json" />
+  <meta name="theme-color" content="#0d6efd" />
+
+  <!-- Page-local style (same look as physicaldesign.html) -->
+  <style>
+    :root{
+      --code-bg:#0b0d10; --code-text:#e6e6e6; --code-accent:#ff7a00; --code-muted:#8b949e; --chip-bg:#f3f5f7;
+      --space-1:.5rem; --space-2:1rem; --space-3:1.5rem; --space-4:2rem; --space-5:3rem; --space-6:4rem;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.7;color:#0f172a}
+    h1,h2,h3{letter-spacing:-0.01em;line-height:1.25}
+    h1{font-weight:800}
+    h2{margin-top:var(--space-5);margin-bottom:var(--space-2);font-weight:800}
+    h3{margin-top:var(--space-3);margin-bottom:.75rem;font-weight:700}
+    p,ul,ol{font-size:1.05rem}
+    .lead{font-size:1.15rem;color:#4b5563}
+    .section-meta{color:#6b7280;font-size:.95rem;margin-bottom:var(--space-2)}
+    section{scroll-margin-top:100px}
+    .section-pad{padding-top:var(--space-2);padding-bottom:var(--space-2)}
+    .topic-chip{background:var(--chip-bg);color:#111;border-radius:999px;font-weight:700;padding:.5rem .9rem;display:inline-block;margin:.25rem}
+    .codeblk{background:var(--code-bg);color:var(--code-text);border-radius:12px;padding:16px 18px;
+      font:0.96rem/1.6 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
+      position:relative;box-shadow:0 0 0 1px rgba(255,122,0,.15),0 6px 16px rgba(0,0,0,.35);overflow:auto;margin-top:.75rem;margin-bottom:var(--space-3)}
+    .codeblk .hdr{position:absolute;top:8px;right:12px;color:var(--code-muted);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase}
+    .codeblk .kw{color:#ffae42}.codeblk .str{color:#6ee7b7}.codeblk .cm{color:#8b949e}.codeblk .num{color:#9abaff}
+    .toc-wrap{padding:var(--space-3);border:1px solid #e5e7eb;border-radius:12px;background:#fff}
+    .toc-title{font-size:1.35rem;font-weight:800;margin-bottom:var(--space-2)}
+    .toc a{text-decoration:none;color:#4b5563}
+    .toc a:hover{color:#000}
+    .toc li{margin:.55rem 0}
+    .sticky-top{top:100px}
+    .navbar .nav-link{color:#000 !important;font-weight:500}
+    .navbar .nav-link:hover,.navbar .nav-link:focus{color:#ff7a00 !important}
+    .navbar .navbar-brand{color:#000 !important;font-weight:700}
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <nav class="navbar navbar-expand-md fixed-top" id="navbar" aria-label="Main Navigation" data-navbar-soft-on-scroll="data-navbar-soft-on-scroll">
+    <div class="container-fluid px-0">
+      <a class="navbar-brand fw-bold d-none d-md-block" href="index.html">Ondevtra</a>
+      <button class="navbar-toggler border-0 pe-0" type="button" data-bs-toggle="collapse"
+              data-bs-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-md-end" id="navbar-content">                                                        
+              <ul class="navbar-nav gap-md-2 gap-lg-3 pt-x1 pb-1 pt-md-0 pb-md-0" data-navbar-nav="data-navbar-nav">
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#home">Home</a></li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#about">About</a></li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link lh-xl" href="#" id="navbarDropdownBlog" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Blog
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="navbarDropdownBlog">
+                    <li><a class="dropdown-item" href="ai-business-solutions.html">AI Business Solutions</a></li>
+                    <li><a class="dropdown-item" href="ai-outfit-generator.html">AI Outfit Generator</a></li>
+                    <li><a class="dropdown-item" href="aivoicegenerator.html">AI Voice Generator</a></li>
+                    <li><a class="dropdown-item" href="futurejobs.html">Future Jobs</a></li>
+                    <li><a class="dropdown-item" href="aiquizmaker.html">Quiz Maker</a></li>
+                    <li><a class="dropdown-item" href="webdevelopment.html">Web Development</a></li>
+                    <li><a class="dropdown-item" href="Transcribe.html">Transcribe App</a></li>
+                    <li><a class="dropdown-item" href="SpeechtoTextApp.html">Speech to Text App</a></li>
+                    <li><a class="dropdown-item" href="AIWealth.html">AI and Wealth</a></li>
+                    <li><a class="dropdown-item" href="ChatGPT.html">ChatGPT</a></li>
+                    <li><a class="dropdown-item" href="GenerativeAI.html">Generative AI</a></li>
+                  </ul>
+                </li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#service">Support</a></li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#pricing">Pricing</a></li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#contact">Contact</a></li>
+              </ul>
+            </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero-section overflow-hidden position-relative z-0 mb-4 mb-lg-0 pt-7" id="home" aria-label="Hero section">
+    <div class="hero-background">
+      <div class="container">
+        <div class="row gy-4 gy-md-8 pt-9 pt-lg-6 align-items-center">
+          <div class="col-lg-6 text-center text-lg-start">
+            <h1 class="fw-bold mb-3">Clock Tree Synthesis (CTS)</h1>
+            <p class="lead mb-4">
+              Build a robust clock network with open-source tools. Understand skew and insertion delay, pick the right buffers,
+              and close timing across corners with OpenROAD & OpenSTA.
+            </p>
+            <div class="d-flex justify-content-center justify-content-lg-start gap-2">
+              <a class="btn btn-primary btn-lg lh-xl" href="#intro">Begin the guide</a>
+            </div>
+            <div class="mt-3">
+              <span class="topic-chip">VLSI</span>
+              <span class="topic-chip">CTS</span>
+              <span class="topic-chip">OpenROAD</span>
+              <span class="topic-chip">OpenSTA</span>
+            </div>
+          </div>
+          <div class="col-lg-6 text-center">
+            <img class="img-fluid rounded" src="assets/img/illustrations/clock_tree_sketch.png"
+                 alt="Clock tree synthesis H-tree diagram" decoding="async" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="position-absolute bottom-0 start-0 end-0 z-1">
+      <img class="wave mb-md-n2" src="assets/img/illustrations/Wave.svg" alt="" />
+      <div class="bg-white py-2 py-md-5"></div>
+    </div>
+  </section>
+
+  <!-- Main -->
+  <main class="container my-5">
+    <div class="row">
+      <!-- TOC -->
+      <aside class="col-lg-3 mb-4 mb-lg-0">
+        <div class="toc-wrap sticky-top">
+          <div class="toc-title">Table of contents</div>
+          <ul class="list-unstyled toc">
+            <li><a href="#intro">Introduction</a></li>
+            <li><a href="#goals">CTS goals & definitions</a></li>
+            <li><a href="#topologies">Topologies: H-tree vs clustering</a></li>
+            <li><a href="#buffers">Buffers, sizing & shielding</a></li>
+            <li><a href="#openroad">OpenROAD CTS flow</a></li>
+            <li><a href="#opensta">Verify with OpenSTA</a></li>
+            <li><a href="#useful">Useful skew & ECO tactics</a></li>
+            <li><a href="#debug">Debug & common pitfalls</a></li>
+            <li><a href="#checklist">Sign-off checklist</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Article -->
+      <article class="col-lg-9">
+        <p class="section-meta">⏱️ 15–25 min • Intermediate • Updated Aug 2025</p>
+
+        <section id="intro" class="section-pad">
+          <h2>Introduction</h2>
+          <p>
+            Clock Tree Synthesis (CTS) distributes the clock from one or more sources to every sequential element
+            while controlling <em>skew</em> (difference in arrival time between sinks) and <em>insertion delay</em> (latency from source to sink).
+            A good clock tree keeps skew small, insertion delay reasonable, and jitter low—so timing closure is achievable.
+          </p>
+        </section>
+
+        <section id="goals" class="section-pad">
+          <h2>CTS goals & definitions</h2>
+          <ul>
+            <li><strong>Skew:</strong> Δ between two sink arrival times. Lower skew → fewer false setup/hold issues.</li>
+            <li><strong>Insertion delay (latency):</strong> Time from clock source to sink pin. Keep balanced across the chip.</li>
+            <li><strong>Jitter:</strong> Edge arrival variation; budget in your SDC so STA is realistic.</li>
+            <li><strong>Power:</strong> Clock nets toggle every cycle—optimize buffers and wirelength.</li>
+          </ul>
+          <div class="text-center my-3">
+            <img class="img-fluid rounded" src="assets/img/illustrations/timing_path_setup.png"
+                 alt="Setup timing path & slack diagram" decoding="async" />
+            <p class="small text-muted mt-2">Setup path & slack: the clock tree impacts both arrival and required times.</p>
+          </div>
+        </section>
+
+        <section id="topologies" class="section-pad">
+          <h2>Topologies: H-tree vs clustering</h2>
+          <h3>H-tree</h3>
+          <ul>
+            <li>Symmetric branching → naturally balanced paths → low skew.</li>
+            <li>Works well for uniform sink distribution; can be wire-heavy for irregular layouts.</li>
+          </ul>
+          <h3>Clustered / balanced trees</h3>
+          <ul>
+            <li>Group sinks spatially, build local subtrees, then connect to a trunk.</li>
+            <li>Practical for real SoCs with macros and non-uniform placement.</li>
+          </ul>
+        </section>
+
+        <section id="buffers" class="section-pad">
+          <h2>Buffers, sizing & shielding</h2>
+          <ul>
+            <li><strong>Buffer set:</strong> Allow only clock-friendly cells (balanced rise/fall, low variation).</li>
+            <li><strong>Sizing:</strong> Keep slew under library max; upsize only where needed to limit power.</li>
+            <li><strong>Shielding:</strong> Route clock on higher metals with ground shields or double-spacing to reduce crosstalk.</li>
+            <li><strong>Gating:</strong> Use integrated clock gating cells (ICGs) for power domains; CTS must recognize them.</li>
+          </ul>
+        </section>
+
+        <section id="openroad" class="section-pad">
+          <h2>OpenROAD CTS flow (example)</h2>
+          <p>Assuming your design is placed and you have Liberty/LEF ready, here is a compact OpenROAD recipe:</p>
+
+          <div class="codeblk">
+            <div class="hdr">openroad_cts.tcl</div>
+<pre><code><span class="cm"># 0) Prereqs: tech + libs + placed design</span>
+read_liberty sky130_fd_sc_hd__tt_025C_1v80.lib
+read_lef     sky130_fd_sc_hd.tlef
+read_lef     sky130_fd_sc_hd__merged.lef
+read_def     design_placed.def
+link_design  top
+
+<span class="cm"># 1) Define allowed clock buffers/inverters</span>
+set clk_bufs { sky130_fd_sc_hd__clkbuf_2 sky130_fd_sc_hd__clkbuf_4 sky130_fd_sc_hd__clkbuf_8 }
+set clk_invs { sky130_fd_sc_hd__clkinv_2 sky130_fd_sc_hd__clkinv_4 }
+
+<span class="cm"># 2) Select sinks and root</span>
+create_clock -name core_clk -period 10 [get_ports clk]
+set_propagated_clock [get_clocks core_clk]
+
+<span class="cm"># 3) CTS options (skew targets depend on frequency + PVT)</span>
+set cts::target_skew 0.08  <span class="cm"># 80ps example</span>
+set cts::max_latency 1.8   <span class="cm"># ns, example budget</span>
+
+<span class="cm"># 4) Run CTS</span>
+set_dont_use  sky130_fd_sc_hd__buf_*   <span class="cm"># avoid generic BUFs in clock</span>
+set_dont_use  sky130_fd_sc_hd__inv_*   <span class="cm"># avoid generic INVs in clock</span>
+remove_dont_use $clk_bufs
+remove_dont_use $clk_invs
+
+clock_tree_synthesis \
+  -root_buf  sky130_fd_sc_hd__clkbuf_8 \
+  -buf_list  [join $clk_bufs " "] \
+  -inv_list  [join $clk_invs " "] \
+  -sink_clustering_enable \
+  -balance_levels
+
+<span class="cm"># 5) Post-CTS legalization & opt</span>
+place_opt
+repair_timing -setup
+repair_timing -hold
+
+write_def  design_postcts.def
+write_sdc  design_postcts.sdc
+write_verilog design_postcts.v
+</code></pre>
+          </div>
+
+          <p class="small text-secondary">
+            Tip: For multi-clock designs, run CTS per clock or ensure proper domains and generated clocks are modeled in SDC.
+          </p>
+        </section>
+
+        <section id="opensta" class="section-pad">
+          <h2>Verify with OpenSTA (setup & hold)</h2>
+          <p>After CTS, re-run STA across PVT corners. Ensure clock is propagated and uncertainties are set.</p>
+
+          <div class="codeblk">
+            <div class="hdr">opensta_cts_check.tcl</div>
+<pre><code>read_liberty sky130_fd_sc_hd__tt_025C_1v80.lib
+read_verilog design_postcts.v
+read_sdc     design_postcts.sdc
+link_design  top
+
+<span class="cm"># Use propagated clocks to model the built tree</span>
+set_propagated_clock [all_clocks]
+
+report_clocks
+report_clock_skew  -setup
+report_clock_skew  -hold
+report_checks -path_delay min_max -fields {slew capacitance transition} -digits 3 -group_count 10
+</code></pre>
+          </div>
+
+          <p>Watch for:</p>
+          <ul>
+            <li><strong>Skew histograms:</strong> narrow is good; outliers often indicate long detours or congestion.</li>
+            <li><strong>Hold violations:</strong> common after CTS; fix with local delay cells (don’t globally slow the clock).</li>
+            <li><strong>Setup regressions:</strong> rebuffering or tree depth might have increased insertion delay—optimize or re-cluster.</li>
+          </ul>
+        </section>
+
+        <section id="useful" class="section-pad">
+          <h2>Useful skew & ECO tactics</h2>
+          <ul>
+            <li><strong>Useful skew:</strong> intentionally shift arrival to relax critical setup at the expense of neighboring paths.</li>
+            <li><strong>Local ECOs:</strong> targeted buffer upsizing/downsizing or inserting delay cells on specific branches.</li>
+            <li><strong>Retiming candidates:</strong> if the same path stays critical, consider micro-architecture or placement changes.</li>
+          </ul>
+
+          <div class="codeblk">
+            <div class="hdr">Targeted hold repair (OpenROAD)</div>
+<pre><code>repair_timing -hold -effort high -max_buffer_percent 2
+report_checks -path_delay min
+</code></pre>
+          </div>
+        </section>
+
+        <section id="debug" class="section-pad">
+          <h2>Debug & common pitfalls</h2>
+          <ul>
+            <li><strong>Mismatched buffer lists:</strong> ensure allowed clock cells exist in your Liberty & LEF.</li>
+            <li><strong>Routing detours:</strong> force preferred layers or shielding for long trunks; reduce coupling.</li>
+            <li><strong>Over-constraining skew:</strong> ultra-tight targets can explode buffer count and power.</li>
+            <li><strong>Unmodeled jitter/uncertainty:</strong> leads to optimistic timing—set realistic margins in SDC.</li>
+            <li><strong>Gated domains:</strong> mark ICGs and generated clocks correctly, or CTS may skip sinks.</li>
+          </ul>
+        </section>
+
+        <section id="checklist" class="section-pad">
+          <h2>Sign-off checklist</h2>
+          <ol>
+            <li>All clock sinks connected and recognized by STA.</li>
+            <li>Skew & insertion delay within design targets; histograms inspected.</li>
+            <li>Setup/hold met across MCMM corners; clock uncertainties applied.</li>
+            <li>EM/IR and crosstalk risk acceptable on clock metals; shielding verified where needed.</li>
+            <li>No DRC on clock nets; antenna rules satisfied.</li>
+          </ol>
+        </section>
+
+        <section id="faq" class="section-pad">
+          <h2>FAQ</h2>
+          <p><strong>What’s a reasonable skew target?</strong> Depends on period & variation. For a 100&nbsp;MHz design, ≈50–100&nbsp;ps is a common starting point.</p>
+          <p><strong>Do I run CTS before or after global routing?</strong> After placement (pre-route), then legalize/opt and proceed to route; recheck STA.</p>
+          <p><strong>How do I handle multiple clocks?</strong> Build per clock domain, define generated clocks, and isolate constraints for clarity.</p>
+        </section>
+
+        <section class="section-pad">
+          <p class="mb-2">You might also like</p>
+          <ul>
+            <li><a href="physicaldesign.html">VLSI Physical Design — Open Source Tools Setup & Roadmap</a></li>
+            <li><a href="gpt5-prompt-guide.html">AI Chat GPT-5 Prompt Guide</a></li>
+          </ul>
+        </section>
+
+      </article>
+    </div>
+  </main>
+
+  <!-- Contact -->
+  <section class="bg-300 position-relative z-0" id="contact">
+    <div class="container py-8 py-lg-9">
+      <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7 text-center">
+          <h2 class="fs-4 fs-lg-3 fw-bold mb-2 lh-sm">Get in Touch</h2>
+          <p class="fs-8 mb-5 lh-lg">Need help reasoning about skew targets or CTS ECOs? Ping us.</p>
+          <a href="mailto:info@ondevtra.com" class="btn btn-lg btn-primary lh-xl mb-3">Contact Us</a>
+          <p class="mb-0">We’ll respond promptly. Email: <a href="mailto:info@ondevtra.com">info@ondevtra.com</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="position-absolute bottom-0 end-0 z-n1 d-none d-lg-block">
+      <img src="assets/img/illustrations/Green_dots.svg" alt="" />
+    </div>
+    <div class="position-relative bottom-0 start-0 z-1">
+      <img class="img-fluid w-100" src="assets/img/illustrations/Wave_3.svg" alt="" />
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <section class="py-6 bg-100" id="discover-more">
+    <div class="container">
+      <div class="row justify-content-center text-center mb-5">
+        <div class="col-12 col-lg-10">
+          <h2 class="fs-4 fs-lg-3 fw-bold lh-sm mb-3">Explore More from Ondevtra AI</h2>
+          <p class="fs-8 lh-lg mb-0">Jump into our other AI guides, tools, and resources to keep learning.</p>
+        </div>
+      </div>
+      <div class="row g-4">
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone1 text-decoration-none h-100" href="Routing.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-robot"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">VLSI Routing with Open-Source Tools — Global, Detailed, DRC &amp; Antenna | Ondevtra</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone2 text-decoration-none h-100" href="SpeechtoTextApp.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-microphone"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">AI Speech to Text App | Real-Time Transcription &amp; Voice Typing Software | Ondevtra</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone3 text-decoration-none h-100" href="Transcribe.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-rocket"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">Transcribe App - Ondevtra Technologies</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone4 text-decoration-none h-100" href="ai-outfit-generator.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-lightbulb-alt"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">AI Outfit Generator : Personal AI Stylist | Ondevtra</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone5 text-decoration-none h-100" href="ai.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-atom"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">Artificial Intelligence - Ondevtra Technologies</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone1 text-decoration-none h-100" href="aiquizmaker.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-brain"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">AI Quiz Generator: Create Automated Quizzes Instantly | Ondevtra</h3>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<section class="py-6" id="app-downloads">
+    <div class="container">
+      <div class="row justify-content-center text-center mb-5">
+        <div class="col-12 col-lg-10">
+          <h2 class="fs-4 fs-lg-3 fw-bold lh-sm mb-3">Scan &amp; Download Our AI Apps</h2>
+          <p class="fs-8 lh-lg mb-0">Use these QR codes or tap the badges to jump straight to the App Store.</p>
+        </div>
+      </div>
+      <div class="row g-4 justify-content-center">
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="px-4 py-4 border rounded-3 shadow-sm bg-white text-center h-100">
+            <div class="d-flex flex-column align-items-center gap-3">
+              <img src="assets/img/illustrations/ai_voice_generator.jpg" alt="AI Voice Generator app preview" class="img-fluid rounded-3" style="max-width: 180px;" loading="lazy"/>
+              <img class="img-fluid rounded-3" style="max-width: 220px;" src="assets/img/illustrations/qr-code-aivoicegenerator.jpg" alt="QR code for AI Voice Generator app" loading="lazy"/>
+              <a class="appstore-badge d-inline-block" href="https://apps.apple.com/us/app/voice-generator-text-to-speech/id1501788870" aria-label="Download AI Voice Generator on the App Store">
+                <img class="d-block mx-auto"
+                     src="assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.svg"
+                     onerror="this.onerror=null;this.src='assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.jpeg';"
+                     alt="Download on the App Store" width="180" height="60"/>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="px-4 py-4 border rounded-3 shadow-sm bg-white text-center h-100">
+            <div class="d-flex flex-column align-items-center gap-3">
+              <img src="assets/img/illustrations/fashionstylist1.png" alt="AI Outfit Generator app icon" width="96" height="96" loading="lazy"/>
+              <img class="img-fluid rounded-3" style="max-width: 220px;" src="assets/img/illustrations/qr-code-aioutfitgenerator.jpg" alt="QR code for AI Outfit Generator app" loading="lazy"/>
+              <a class="appstore-badge d-block mx-auto" href="https://apps.apple.com/app/ai-outfit-generator-stylist/id6753270026" aria-label="Download AI Outfit Generator on the App Store">
+                <img src="assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.svg"
+                     onerror="this.onerror=null;this.src='assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.jpeg';"
+                     alt="Download on the App Store" width="180" height="60"/>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+<footer class="pt-7 pt-lg-8">
+    <div class="container">
+      <div class="row gy-4 g-md-3 border-bottom pb-8 pb-lg-9 justify-content-center">
+        <div class="col-6 col-md-3">
+          <p class="mb-2 lh-lg ls-1">Company</p>
+          <ul class="list-unstyled text-1100">
+            <li class="mb-1"><a class="ls-1 lh-xl" href="index.html#about">About us</a></li>
+            <li class="mb-1"><a class="ls-1 lh-xl" href="index.html#contact">Contact us</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-md-3">
+          <ul class="list-unstyled text-1100">
+            <li class="mb-1"><a class="ls-1 lh-xl" href="privacypolicy.html">Privacy</a></li>
+            <li class="mb-1"><a class="ls-1 lh-xl" href="termsandcondition.html">Terms &amp; Conditions</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="row gy-2 py-3 justify-content-center justify-content-md-between">
+        <div class="col-auto ps-0">
+          <p class="text-center text-md-start lh-xl text-1100">© <span id="year"></span> Copyright, All Right Reserved, <a class="fw-semi-bold" href="https://ondevtra.com/">Ondevtra Technologies</a> ❤️</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Article",
+    "headline":"Clock Tree Synthesis (CTS) — Open-Source Flow, Concepts & Commands",
+    "description":"Learn CTS end-to-end: skew, insertion delay, useful skew, OpenROAD/OpenSTA command recipes, and debugging tips.",
+    "image":"https://ondevtra.com/assets/img/illustrations/clock_tree_sketch.png",
+    "author":{"@type":"Organization","name":"Ondevtra AI"},
+    "publisher":{"@type":"Organization","name":"Ondevtra AI","logo":{"@type":"ImageObject","url":"https://ondevtra.com/assets/img/favicons/favicon-32x32.png"}},
+    "datePublished":"2025-08-27",
+    "dateModified":"2025-08-27",
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://ondevtra.com/cts-clock-tree-synthesis.html"}
+  }
+  </script>
+
+  <script src="vendors/popper/popper.min.js" defer></script>
+  <script src="vendors/bootstrap/bootstrap.min.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const y = document.getElementById('year');
+      if (y) y.textContent = new Date().getFullYear();
+    });
+  </script>
+</body>
+</html>

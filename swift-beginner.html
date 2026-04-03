@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" data-bs-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+  <title>Swift for Beginners — Install, Learn the Basics & Build Your First iOS App | Ondevtra</title>
+  <link rel="canonical" href="https://ondevtra.com/swift-beginner.html" />
+  <meta name="description" content="A friendly, practical Swift beginner guide. Install Xcode, learn Swift syntax and Optionals, master SwiftUI basics, networking, async/await, unit tests, and ship a simple iOS app." />
+            <meta name="keywords" content="Swift basics, Xcode setup, iOS starter, mobile dev, Apple coding, SwiftUI, learning, Ondevtra" />
+<meta name="robots" content="index,follow,max-image-preview:large" />
+  <meta name="author" content="Ondevtra" />
+
+  <!-- Social -->
+  <meta property="og:title" content="Swift for Beginners — Install, Learn the Basics & Build Your First iOS App" />
+  <meta property="og:description" content="Step-by-step Swift guide: setup, language essentials, SwiftUI, networking and your first app." />
+  <meta property="og:image" content="https://ondevtra.com/assets/img/illustrations/swift_cover.jpg" />
+  <meta property="og:url" content="https://ondevtra.com/swift-beginner.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Ondevtra" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Your stack -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vendors/swiper/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css" />
+  <link href="assets/css/theme-v2.min.css?v=1" rel="stylesheet" id="style-default" />
+
+  <!-- Favicons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicons/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicons/favicon-16x16.png" />
+  <link rel="shortcut icon" href="assets/img/favicons/favicon.ico" />
+  <link rel="manifest" href="assets/img/favicons/manifest.json" />
+  <meta name="theme-color" content="#0d6efd" />
+
+  <style>
+  :root{
+    --code-bg:#0b0d10; --code-text:#e6e6e6; --code-accent:#ff7a00; --code-muted:#8b949e; --chip-bg:#f3f5f7;
+    --space-1:.5rem; --space-2:1rem; --space-3:1.5rem; --space-4:2rem; --space-5:3rem; --space-6:4rem;
+  }
+  html{scroll-behavior:smooth}
+  body{font-family:Inter, system-ui, -apple-system, Segoe UI, sans-serif; line-height:1.7; color:#0f172a}
+  h1,h2,h3{letter-spacing:-.01em; line-height:1.25}
+  h1{font-weight:800}
+  h2{margin-top:var(--space-5); margin-bottom:var(--space-2); font-weight:800}
+  h3{margin-top:var(--space-3); margin-bottom:.75rem; font-weight:700}
+  p,ul,ol{font-size:1.05rem}
+  .lead{font-size:1.15rem; color:#4b5563}
+  .section-meta{color:#6b7280; font-size:.95rem; margin-bottom:var(--space-2)}
+  section{scroll-margin-top:100px}
+  .section-pad{padding-top:var(--space-2); padding-bottom:var(--space-2)}
+  .topic-chip{background:var(--chip-bg); color:#111; border-radius:999px; font-weight:700; padding:.5rem .9rem; display:inline-block; margin:.25rem}
+  .toc-wrap{padding:var(--space-3); border:1px solid #e5e7eb; border-radius:12px; background:#fff}
+  .toc-title{font-size:1.35rem; font-weight:800; margin-bottom:var(--space-2)}
+  .toc a{text-decoration:none; color:#4b5563}
+  .toc a:hover{color:#000}
+  .toc li{margin:.55rem 0}
+  .sticky-top{top:100px}
+  .navbar .nav-link{color:#000 !important; font-weight:500}
+  .navbar .nav-link:hover,.navbar .nav-link:focus{color:#ff7a00 !important}
+  .navbar .navbar-brand{color:#000 !important; font-weight:700}
+  .codeblk{background:var(--code-bg); color:var(--code-text); border-radius:12px; padding:16px 18px;
+           font:0.96rem/1.6 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
+           position:relative; box-shadow:0 0 0 1px rgba(255,122,0,.15),0 6px 16px rgba(0,0,0,.35);
+           overflow:auto; margin-top:.75rem; margin-bottom:var(--space-3)}
+  .codeblk .hdr{position:absolute; top:8px; right:12px; color:var(--code-muted); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase}
+  .codeblk .kw{color:#ffae42} .codeblk .str{color:#6ee7b7} .codeblk .cm{color:#8b949e} .codeblk .num{color:#9abaff}
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <nav class="navbar navbar-expand-md fixed-top" id="navbar" aria-label="Main Navigation" data-navbar-soft-on-scroll="data-navbar-soft-on-scroll">
+    <div class="container-fluid px-0">
+      <a class="navbar-brand fw-bold d-none d-md-block" href="index.html">Ondevtra</a>
+      <button class="navbar-toggler border-0 pe-0" type="button" data-bs-toggle="collapse"
+              data-bs-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-md-end" id="navbar-content">                                                        
+              <ul class="navbar-nav gap-md-2 gap-lg-3 pt-x1 pb-1 pt-md-0 pb-md-0" data-navbar-nav="data-navbar-nav">
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#home">Home</a></li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#about">About</a></li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link lh-xl" href="#" id="navbarDropdownBlog" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Blog
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="navbarDropdownBlog">
+                    <li><a class="dropdown-item" href="ai-business-solutions.html">AI Business Solutions</a></li>
+                    <li><a class="dropdown-item" href="ai-outfit-generator.html">AI Outfit Generator</a></li>
+                    <li><a class="dropdown-item" href="aivoicegenerator.html">AI Voice Generator</a></li>
+                    <li><a class="dropdown-item" href="futurejobs.html">Future Jobs</a></li>
+                    <li><a class="dropdown-item" href="aiquizmaker.html">Quiz Maker</a></li>
+                    <li><a class="dropdown-item" href="webdevelopment.html">Web Development</a></li>
+                    <li><a class="dropdown-item" href="Transcribe.html">Transcribe App</a></li>
+                    <li><a class="dropdown-item" href="SpeechtoTextApp.html">Speech to Text App</a></li>
+                    <li><a class="dropdown-item" href="AIWealth.html">AI and Wealth</a></li>
+                    <li><a class="dropdown-item" href="ChatGPT.html">ChatGPT</a></li>
+                    <li><a class="dropdown-item" href="GenerativeAI.html">Generative AI</a></li>
+                  </ul>
+                </li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#service">Support</a></li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#pricing">Pricing</a></li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#contact">Contact</a></li>
+              </ul>
+            </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero-section overflow-hidden position-relative z-0 mb-4 mb-lg-0 pt-7" id="home" aria-label="Hero section">
+    <div class="hero-background">
+      <div class="container">
+        <div class="row gy-4 gy-md-8 pt-9 pt-lg-6 align-items-center">
+          <div class="col-lg-6 text-center text-lg-start">
+            <h1 class="fw-bold mb-3">Swift for Beginners</h1>
+            <p class="lead mb-4">Install Xcode, learn Swift fundamentals, build with SwiftUI, call APIs, test your code, and publish a tiny iOS app.</p>
+            <div class="d-flex justify-content-center justify-content-lg-start gap-2">
+              <a class="btn btn-primary btn-lg lh-xl" href="#intro">Start learning</a>
+            </div>
+            <div class="mt-3">
+              <span class="topic-chip">Swift</span>
+              <span class="topic-chip">SwiftUI</span>
+              <span class="topic-chip">iOS</span>
+              <span class="topic-chip">Beginner</span>
+            </div>
+          </div>
+          <div class="col-lg-6 text-center">
+            <img class="img-fluid rounded" src="assets/img/illustrations/swift_cover.jpg" alt="Swift beginner guide cover" decoding="async" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="position-absolute bottom-0 start-0 end-0 z-1">
+      <img class="wave mb-md-n2" src="assets/img/illustrations/Wave.svg" alt="" />
+      <div class="bg-white py-2 py-md-5"></div>
+    </div>
+  </section>
+
+  <!-- Main -->
+  <main class="container my-5">
+    <div class="row">
+      <!-- TOC -->
+      <aside class="col-lg-3 mb-4 mb-lg-0">
+        <div class="toc-wrap sticky-top">
+          <div class="toc-title">Table of contents</div>
+          <ul class="list-unstyled toc">
+            <li><a href="#intro">Introduction</a></li>
+            <li><a href="#setup">Setup: Xcode & tools</a></li>
+            <li><a href="#playgrounds">Swift Playgrounds</a></li>
+            <li><a href="#syntax">Language basics</a></li>
+            <li><a href="#optionals">Optionals & safety</a></li>
+            <li><a href="#functions">Functions & closures</a></li>
+            <li><a href="#types">Structs, classes & enums</a></li>
+            <li><a href="#protocols">Protocols & extensions</a></li>
+            <li><a href="#error">Error handling</a></li>
+            <li><a href="#async">Concurrency (async/await)</a></li>
+            <li><a href="#swiftui">SwiftUI in 20 minutes</a></li>
+            <li><a href="#project">Your first app: step-by-step</a></li>
+            <li><a href="#networking">Networking & JSON</a></li>
+            <li><a href="#testing">Unit tests</a></li>
+            <li><a href="#best">Best practices</a></li>
+            <li><a href="#resources">Resources</a></li>
+            <li><a href="#glossary">Glossary</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Article -->
+      <article class="col-lg-9">
+        <p class="section-meta">⏱️ 20–35 min • Beginner • Updated Aug 2025</p>
+
+        <section id="intro" class="section-pad">
+          <h2>Introduction</h2>
+          <p>Swift is Apple’s modern programming language for iOS, iPadOS, macOS, watchOS and tvOS. It’s safe by default (thanks to Optionals and type inference), fast, and expressive—great for beginners, powerful for pros.</p>
+        </section>
+
+        <section id="setup" class="section-pad">
+          <h2>Setup: Xcode & tools</h2>
+          <ol>
+            <li>Install the latest <strong>Xcode</strong> from the Mac App Store.</li>
+            <li>Open Xcode → <em>Preferences</em> → <em>Locations</em> → set the <em>Command Line Tools</em>.</li>
+            <li>Optional: install <strong>Homebrew</strong> for helpful dev tools.</li>
+          </ol>
+          <div class="codeblk">
+            <div class="hdr">Homebrew (optional)</div>
+<pre><code class="bash">/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+brew --version
+</code></pre>
+          </div>
+        </section>
+
+        <section id="playgrounds" class="section-pad">
+          <h2>Swift Playgrounds</h2>
+          <p>Playgrounds give instant feedback. In Xcode: File → New → <em>Playground</em>. Type code and see results immediately.</p>
+          <div class="codeblk">
+            <div class="hdr">Hello, Swift</div>
+<pre><code class="swift"><span class="kw">import</span> Foundation
+<span class="kw">print</span>(<span class="str">"Hello, Swift 👋"</span>)
+</code></pre>
+          </div>
+        </section>
+
+        <section id="syntax" class="section-pad">
+          <h2>Language basics</h2>
+          <div class="codeblk">
+            <div class="hdr">Variables, constants, types</div>
+<pre><code class="swift"><span class="kw">let</span> appName: <span class="kw">String</span> = <span class="str">"Ondevtra"</span>   <span class="cm">// constant</span>
+<span class="kw">var</span> version = <span class="num">1</span>                     <span class="cm">// type inferred as Int</span>
+<span class="kw">var</span> price: <span class="kw">Double</span> = <span class="num">3.99</span>
+</code></pre>
+          </div>
+
+          <div class="codeblk">
+            <div class="hdr">Control flow</div>
+<pre><code class="swift"><span class="kw">for</span> i <span class="kw">in</span> <span class="num">1</span>...<span class="num">3</span> { <span class="kw">print</span>(i) }
+<span class="kw">let</span> score = <span class="num">82</span>
+<span class="kw">switch</span> score {
+<span class="kw">case</span> <span class="num">0</span>..<span class="num">50</span>: <span class="kw">print</span>(<span class="str">"Needs work"</span>)
+<span class="kw">case</span> <span class="num">50</span>..<span class="num">90</span>: <span class="kw">print</span>(<span class="str">"Good"</span>)
+<span class="kw">default</span>:   <span class="kw">print</span>(<span class="str">"Great!"</span>)
+}
+</code></pre>
+          </div>
+        </section>
+
+        <section id="optionals" class="section-pad">
+          <h2>Optionals & safety</h2>
+          <p>Optionals represent “a value or no value”. You must unwrap before use—this prevents many runtime crashes.</p>
+          <div class="codeblk">
+            <div class="hdr">Optionals</div>
+<pre><code class="swift"><span class="kw">var</span> nickname: <span class="kw">String</span>? = <span class="kw">nil</span>
+nickname = <span class="str">"Sim"</span>
+
+<span class="cm">// Safe unwrapping</span>
+<span class="kw">if let</span> name = nickname { <span class="kw">print</span>(<span class="str">"Hi, \(name)"</span>) }
+</code></pre>
+          </div>
+        </section>
+
+        <section id="functions" class="section-pad">
+          <h2>Functions & closures</h2>
+          <div class="codeblk">
+            <div class="hdr">Functions</div>
+<pre><code class="swift"><span class="kw">func</span> greet(_ who: <span class="kw">String</span>) -&gt; <span class="kw">String</span> {
+  <span class="kw">return</span> <span class="str">"Hello, \(who)!"</span>
+}
+greet(<span class="str">"world"</span>)
+</code></pre>
+          </div>
+          <div class="codeblk">
+            <div class="hdr">Closures</div>
+<pre><code class="swift"><span class="kw">let</span> names = [<span class="str">"Ava"</span>, <span class="str">"Ben"</span>, <span class="str">"Cara"</span>]
+<span class="kw">let</span> sorted = names.sorted { a, b <span class="kw">in</span> a &lt; b }
+</code></pre>
+          </div>
+        </section>
+
+        <section id="types" class="section-pad">
+          <h2>Structs, classes & enums</h2>
+          <ul>
+            <li><strong>Structs</strong> are value types (copied on assignment), great for models.</li>
+            <li><strong>Classes</strong> are reference types (shared identity), used with inheritance.</li>
+            <li><strong>Enums</strong> represent a fixed set of cases; can have associated values.</li>
+          </ul>
+          <div class="codeblk">
+            <div class="hdr">Types</div>
+<pre><code class="swift"><span class="kw">struct</span> User { <span class="kw">let</span> id: <span class="kw">Int</span>; <span class="kw">var</span> name: <span class="kw">String</span> }
+<span class="kw">enum</span> Mood { <span class="kw">case</span> happy, sad, neutral }
+<span class="kw">class</span> Session { <span class="kw">var</span> isLoggedIn = <span class="kw">false</span> }
+</code></pre>
+          </div>
+        </section>
+
+        <section id="protocols" class="section-pad">
+          <h2>Protocols & extensions</h2>
+          <p>Protocols define capabilities; any type can conform. Extensions add behavior to existing types—clean and reusable.</p>
+          <div class="codeblk">
+            <div class="hdr">Protocols</div>
+<pre><code class="swift"><span class="kw">protocol</span> Printable { <span class="kw">func</span> pretty() -&gt; <span class="kw">String</span> }
+<span class="kw">extension</span> User: Printable {
+  <span class="kw">func</span> pretty() -&gt; <span class="kw">String</span> { <span class="kw">return</span> <span class="str">"#\(id) \(name)"</span> }
+}
+</code></pre>
+          </div>
+        </section>
+
+        <section id="error" class="section-pad">
+          <h2>Error handling</h2>
+          <div class="codeblk">
+            <div class="hdr">Throwing & do/catch</div>
+<pre><code class="swift"><span class="kw">enum</span> FetchError: <span class="kw">Error</span> { <span class="kw">case</span> offline, badData }
+
+<span class="kw">func</span> fetch() throws -&gt; <span class="kw">String</span> {
+  <span class="kw">throw</span> FetchError.offline
+}
+
+<span class="kw">do</span> {
+  <span class="kw">let</span> _ = <span class="kw">try</span> fetch()
+} <span class="kw">catch</span> {
+  <span class="kw">print</span>(error)
+}
+</code></pre>
+          </div>
+        </section>
+
+        <section id="async" class="section-pad">
+          <h2>Concurrency (async/await)</h2>
+          <p>Swift’s structured concurrency makes background work readable and safe.</p>
+          <div class="codeblk">
+            <div class="hdr">Async/await</div>
+<pre><code class="swift"><span class="kw">func</span> download() async throws -&gt; <span class="kw">Data</span> {
+  <span class="kw">let</span> url = URL(string: <span class="str">"https://example.com/data.json"</span>)!
+  <span class="kw">let</span> (data, _) = <span class="kw">try</span> await URLSession.shared.data(from: url)
+  <span class="kw">return</span> data
+}
+
+Task {
+  <span class="kw">if let</span> data = <span class="kw">try?</span> await download() { <span class="kw">print</span>(data.count) }
+}
+</code></pre>
+          </div>
+        </section>
+
+        <section id="swiftui" class="section-pad">
+          <h2>SwiftUI in 20 minutes</h2>
+          <p>SwiftUI is a declarative UI toolkit. You describe the view; the framework handles updates.</p>
+          <div class="codeblk">
+            <div class="hdr">A tiny SwiftUI view</div>
+<pre><code class="swift"><span class="kw">import</span> SwiftUI
+
+<span class="kw">struct</span> HelloView: View {
+  <span class="kw">@State</span> <span class="kw">private</span> <span class="kw">var</span> count = <span class="num">0</span>
+  <span class="kw">var</span> body: some View {
+    VStack(spacing: <span class="num">12</span>) {
+      Text(<span class="str">"Hello, SwiftUI"</span>).font(.title)
+      Button(<span class="str">"Tap: \(count)"</span>) { count += <span class="num">1</span> }
+    }.padding()
+  }
+}
+</code></pre>
+          </div>
+        </section>
+
+        <section id="project" class="section-pad">
+          <h2>Your first app: step-by-step</h2>
+          <ol>
+            <li>Xcode → File → New → App → <em>iOS App</em> with Swift + SwiftUI.</li>
+            <li>Replace the template ContentView with your custom view.</li>
+            <li>Run on the Simulator (choose a device at the top of Xcode).</li>
+          </ol>
+          <div class="codeblk">
+            <div class="hdr">ContentView.swift</div>
+<pre><code class="swift"><span class="kw">struct</span> ContentView: View {
+  <span class="kw">@State</span> <span class="kw">private</span> <span class="kw">var</span> name = <span class="str">""</span>
+  <span class="kw">var</span> body: some View {
+    NavigationStack {
+      Form {
+        TextField(<span class="str">"Your name"</span>, text: $name)
+        Text(<span class="str">"Welcome, \(name.isEmpty ? "friend" : name)!"</span>)
+      }
+      .navigationTitle(<span class="str">"Starter App"</span>)
+    }
+  }
+}
+</code></pre>
+          </div>
+        </section>
+
+        <section id="networking" class="section-pad">
+          <h2>Networking & JSON</h2>
+          <p>Decode JSON using <code>Codable</code>.</p>
+          <div class="codeblk">
+            <div class="hdr">Fetch a list</div>
+<pre><code class="swift"><span class="kw">struct</span> Post: Codable, Identifiable { <span class="kw">let</span> id: <span class="kw">Int</span>; <span class="kw">let</span> title: <span class="kw">String</span> }
+
+<span class="kw">class</span> PostVM: ObservableObject {
+  <span class="kw">@Published</span> <span class="kw">var</span> posts: [Post] = []
+
+  <span class="kw">func</span> load() async {
+    <span class="kw">guard let</span> url = URL(string: <span class="str">"https://jsonplaceholder.typicode.com/posts"</span>) <span class="kw">else</span> { <span class="kw">return</span> }
+    <span class="kw">do</span> {
+      <span class="kw">let</span> (data, _) = <span class="kw">try</span> await URLSession.shared.data(from: url)
+      <span class="kw">let</span> list = <span class="kw">try</span> JSONDecoder().decode([Post].self, from: data)
+      await MainActor.run { self.posts = list.prefix(<span class="num">5</span>).map{$0} }
+    } <span class="kw">catch</span> { <span class="kw">print</span>(error) }
+  }
+}
+</code></pre>
+          </div>
+          <div class="codeblk">
+            <div class="hdr">Show in SwiftUI</div>
+<pre><code class="swift"><span class="kw">struct</span> PostListView: View {
+  <span class="kw">@StateObject</span> <span class="kw">private</span> <span class="kw">var</span> vm = PostVM()
+  <span class="kw">var</span> body: some View {
+    List(vm.posts) { Text($0.title) }
+      .task { await vm.load() }
+      .navigationTitle(<span class="str">"Posts"</span>)
+  }
+}
+</code></pre>
+          </div>
+        </section>
+
+        <section id="testing" class="section-pad">
+          <h2>Unit tests</h2>
+          <p>Add a Test target and write focused tests.</p>
+          <div class="codeblk">
+            <div class="hdr">XCTest</div>
+<pre><code class="swift"><span class="kw">import</span> XCTest
+@testable <span class="kw">import</span> StarterApp
+
+<span class="kw">final class</span> StarterAppTests: XCTestCase {
+  <span class="kw">func</span> testGreeting() {
+    <span class="kw">let</span> text = greet(<span class="str">"Ada"</span>)
+    XCTAssertTrue(text.contains(<span class="str">"Ada"</span>))
+  }
+}
+</code></pre>
+          </div>
+        </section>
+
+        <section id="best" class="section-pad">
+          <h2>Best practices</h2>
+          <ul>
+            <li>Prefer <strong>structs</strong> for models; keep <strong>classes</strong> for shared identity or Obj-C interop.</li>
+            <li>Use <strong>Optionals</strong> thoughtfully; avoid force-unwraps (<code>!</code>) unless guaranteed safe.</li>
+            <li>Leverage <strong>protocols & extensions</strong> for reusable behavior.</li>
+            <li>Keep your UI <strong>stateless</strong> and derive views from data.</li>
+            <li>Adopt <strong>async/await</strong> for clarity in concurrent code.</li>
+          </ul>
+        </section>
+
+        <section id="resources" class="section-pad">
+          <h2>Resources</h2>
+          <ul>
+            <li>Apple’s free book: <em>The Swift Programming Language</em>.</li>
+            <li>Swift Forums & Swift.org documentation.</li>
+            <li>Hacking with Swift (project-based tutorials).</li>
+          </ul>
+        </section>
+
+        <section id="glossary" class="section-pad">
+          <h2>Glossary</h2>
+          <ul>
+            <li><strong>Optional</strong>: a variable that may hold a value or <code>nil</code>.</li>
+            <li><strong>Codable</strong>: protocols to encode/decode data.</li>
+            <li><strong>ObservableObject/@State</strong>: SwiftUI data flow primitives.</li>
+          </ul>
+        </section>
+
+        <section id="faq" class="section-pad">
+          <h2>FAQ</h2>
+          <p><strong>Do I need a paid Apple Developer account?</strong> No for learning. You only need it to publish to the App Store.</p>
+          <p><strong>Mac required?</strong> Yes for Xcode and iOS simulators.</p>
+          <p><strong>How long until I build something?</strong> In a weekend, you can ship a simple SwiftUI app.</p>
+        </section>
+
+        <section class="section-pad">
+          <p class="mb-2">You might also like</p>
+          <ul>
+            <li><a href="gpt5-prompt-guide.html">AI Chat GPT-5 Prompt Guide</a></li>
+            <li><a href="physicaldesign.html">VLSI Physical Design</a></li>
+          </ul>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <!-- Contact -->
+  <section class="bg-300 position-relative z-0" id="contact">
+    <div class="container py-8 py-lg-9">
+      <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7 text-center">
+          <h2 class="fs-4 fs-lg-3 fw-bold mb-2 lh-sm">Get in Touch</h2>
+          <p class="fs-8 mb-5 lh-lg">Questions about Swift or need help structuring your first app? Ping us.</p>
+          <a href="mailto:info@ondevtra.com" class="btn btn-lg btn-primary lh-xl mb-3">Contact Us</a>
+          <p class="mb-0">We’ll respond promptly. Email: <a href="mailto:info@ondevtra.com">info@ondevtra.com</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="position-absolute bottom-0 end-0 z-n1 d-none d-lg-block">
+      <img src="assets/img/illustrations/Green_dots.svg" alt="" />
+    </div>
+    <div class="position-relative bottom-0 start-0 z-1">
+      <img class="img-fluid w-100" src="assets/img/illustrations/Wave_3.svg" alt="" />
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <section class="py-6 bg-100" id="discover-more">
+    <div class="container">
+      <div class="row justify-content-center text-center mb-5">
+        <div class="col-12 col-lg-10">
+          <h2 class="fs-4 fs-lg-3 fw-bold lh-sm mb-3">Explore More from Ondevtra AI</h2>
+          <p class="fs-8 lh-lg mb-0">Jump into our other AI guides, tools, and resources to keep learning.</p>
+        </div>
+      </div>
+      <div class="row g-4">
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone1 text-decoration-none h-100" href="frontend-coding-trends.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-robot"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">Frontend Coding Trends 2025 — React, Next.js, Astro, Svelte, AI &amp; CSS | Ondevtra</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone2 text-decoration-none h-100" href="futurejobs.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-microphone"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">Future Jobs Report 2025</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone3 text-decoration-none h-100" href="gpt5-prompt-guide.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-rocket"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">GPT-5 Prompting Guide — Patterns, Reasoning, Tools &amp; Best Practices | Ondevtra</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone4 text-decoration-none h-100" href="index.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-lightbulb-alt"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">AI Voice Generator &amp; Text to Speech for iPhone | Realistic AI Voiceovers</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone5 text-decoration-none h-100" href="low-power-techniques.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-atom"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">Standard Low-Power Techniques — Clock Gating, Gate-Level Opt, Multi-VDD &amp; Multi-Vt | Ondevtra</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone1 text-decoration-none h-100" href="mcmm-optimization.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-brain"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">MCMM Timing Optimization — Modes, Corners &amp; Practical Flow | Ondevtra</h3>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<section class="py-6" id="app-downloads">
+    <div class="container">
+      <div class="row justify-content-center text-center mb-5">
+        <div class="col-12 col-lg-10">
+          <h2 class="fs-4 fs-lg-3 fw-bold lh-sm mb-3">Scan &amp; Download Our AI Apps</h2>
+          <p class="fs-8 lh-lg mb-0">Use these QR codes or tap the badges to jump straight to the App Store.</p>
+        </div>
+      </div>
+      <div class="row g-4 justify-content-center">
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="px-4 py-4 border rounded-3 shadow-sm bg-white text-center h-100">
+            <div class="d-flex flex-column align-items-center gap-3">
+              <img src="assets/img/illustrations/ai_voice_generator.jpg" alt="AI Voice Generator app preview" class="img-fluid rounded-3" style="max-width: 180px;" loading="lazy"/>
+              <img class="img-fluid rounded-3" style="max-width: 220px;" src="assets/img/illustrations/qr-code-aivoicegenerator.jpg" alt="QR code for AI Voice Generator app" loading="lazy"/>
+              <a class="appstore-badge d-inline-block" href="https://apps.apple.com/us/app/voice-generator-text-to-speech/id1501788870" aria-label="Download AI Voice Generator on the App Store">
+                <img class="d-block mx-auto"
+                     src="assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.svg"
+                     onerror="this.onerror=null;this.src='assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.jpeg';"
+                     alt="Download on the App Store" width="180" height="60"/>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="px-4 py-4 border rounded-3 shadow-sm bg-white text-center h-100">
+            <div class="d-flex flex-column align-items-center gap-3">
+              <img src="assets/img/illustrations/fashionstylist1.png" alt="AI Outfit Generator app icon" width="96" height="96" loading="lazy"/>
+              <img class="img-fluid rounded-3" style="max-width: 220px;" src="assets/img/illustrations/qr-code-aioutfitgenerator.jpg" alt="QR code for AI Outfit Generator app" loading="lazy"/>
+              <a class="appstore-badge d-block mx-auto" href="https://apps.apple.com/app/ai-outfit-generator-stylist/id6753270026" aria-label="Download AI Outfit Generator on the App Store">
+                <img src="assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.svg"
+                     onerror="this.onerror=null;this.src='assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.jpeg';"
+                     alt="Download on the App Store" width="180" height="60"/>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+<footer class="pt-7 pt-lg-8">
+    <div class="container">
+      <div class="row gy-4 g-md-3 border-bottom pb-8 pb-lg-9 justify-content-center">
+        <div class="col-6 col-md-3">
+          <p class="mb-2 lh-lg ls-1">Company</p>
+          <ul class="list-unstyled text-1100">
+            <li class="mb-1"><a class="ls-1 lh-xl" href="index.html#about">About us</a></li>
+            <li class="mb-1"><a class="ls-1 lh-xl" href="index.html#contact">Contact us</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-md-3">
+          <ul class="list-unstyled text-1100">
+            <li class="mb-1"><a class="ls-1 lh-xl" href="privacypolicy.html">Privacy</a></li>
+            <li class="mb-1"><a class="ls-1 lh-xl" href="termsandcondition.html">Terms &amp; Conditions</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="row gy-2 py-3 justify-content-center justify-content-md-between">
+        <div class="col-auto ps-0">
+          <p class="text-center text-md-start lh-xl text-1100">© <span id="year"></span> Copyright, All Right Reserved, <a class="fw-semi-bold" href="https://ondevtra.com/">Ondevtra Technologies</a> ❤️</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Article",
+    "headline":"Swift for Beginners — Install, Learn the Basics & Build Your First iOS App",
+    "description":"Install Xcode, learn Swift fundamentals, build with SwiftUI, call APIs, test your code, and publish a tiny iOS app.",
+    "image":"https://ondevtra.com/assets/img/illustrations/swift_cover.jpg",
+    "author":{"@type":"Organization","name":"Ondevtra"},
+    "publisher":{"@type":"Organization","name":"Ondevtra","logo":{"@type":"ImageObject","url":"https://ondevtra.com/assets/img/favicons/favicon-32x32.png"}},
+    "datePublished":"2025-08-27",
+    "dateModified":"2025-08-27",
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://ondevtra.com/swift-beginner.html"}
+  }
+  </script>
+
+  <script src="vendors/popper/popper.min.js" defer></script>
+  <script src="vendors/bootstrap/bootstrap.min.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const y = document.getElementById('year');
+      if (y) y.textContent = new Date().getFullYear();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" data-bs-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+  <title>Power Gating in VLSI — Concepts, Trade-offs & Practical Flow | Ondevtra</title>
+  <link rel="canonical" href="https://ondevtra.com/power-gating.html" />
+  <meta name="description" content="A practical, beginner-friendly guide to Power Gating in VLSI. Learn dynamic vs leakage power, when to gate, fine- vs coarse-grain strategies, isolation & retention cells, wake-up sequencing, verification, and open-source friendly flows." />
+            <meta name="keywords" content="power gating, sleep transistors, leakage, retention, multi threshold, low power, VLSI, Ondevtra" />
+<meta name="robots" content="index,follow,max-image-preview:large" />
+  <meta name="author" content="Ondevtra AI" />
+
+  <!-- Social -->
+  <meta property="og:title" content="Power Gating in VLSI — Concepts, Trade-offs & Practical Flow" />
+  <meta property="og:description" content="Hands-on guide to power gating with diagrams, flow, checks, and pitfalls. Learn how to cut leakage safely and wake up fast." />
+  <meta property="og:image" content="https://ondevtra.com/assets/img/illustrations/powergating_cover.jpg" />
+  <meta property="og:url" content="https://ondevtra.com/power-gating.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Ondevtra" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Your stack -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vendors/swiper/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css" />
+  <link href="assets/css/theme-v2.min.css?v=1" rel="stylesheet" id="style-default" />
+
+  <!-- Favicons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicons/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicons/favicon-16x16.png" />
+  <link rel="shortcut icon" href="assets/img/favicons/favicon.ico" />
+  <link rel="manifest" href="assets/img/favicons/manifest.json" />
+  <meta name="theme-color" content="#0d6efd" />
+
+  <style>
+  /* power gating guide styles (same feel as physicaldesign.html) */
+  :root{
+    --code-bg:#0b0d10; --code-text:#e6e6e6; --code-accent:#ff7a00; --code-muted:#8b949e; --chip-bg:#f3f5f7;
+    --space-1:.5rem; --space-2:1rem; --space-3:1.5rem; --space-4:2rem; --space-5:3rem; --space-6:4rem;
+  }
+  html{ scroll-behavior:smooth; }
+  body{ font-family:Inter, system-ui, -apple-system, Segoe UI, sans-serif; line-height:1.7; color:#0f172a; }
+  h1,h2,h3{ letter-spacing:-0.01em; line-height:1.25; }
+  h1{ font-weight:800; }
+  h2{ margin-top:var(--space-5); margin-bottom:var(--space-2); font-weight:800; }
+  h3{ margin-top:var(--space-3); margin-bottom:.75rem; font-weight:700; }
+  p, ul, ol{ font-size:1.05rem; }
+  .lead{ font-size:1.15rem; color:#4b5563; }
+  .section-meta{ color:#6b7280; font-size:.95rem; margin-bottom:var(--space-2); }
+  section{ scroll-margin-top:100px; }
+  .section-pad{ padding-top:var(--space-2); padding-bottom:var(--space-2); }
+
+  .topic-chip{ background:var(--chip-bg); color:#111; border-radius:999px; font-weight:700; padding:.5rem .9rem; display:inline-block; margin:.25rem }
+
+  .codeblk{ background:var(--code-bg); color:var(--code-text); border-radius:12px; padding:16px 18px;
+    font:0.96rem/1.6 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
+    position:relative; box-shadow:0 0 0 1px rgba(255,122,0,.15),0 6px 16px rgba(0,0,0,.35); overflow:auto; margin-top:.75rem; margin-bottom:var(--space-3);}
+  .codeblk .hdr{ position:absolute; top:8px; right:12px; color:var(--code-muted); font-size:.72rem; letter-spacing:.04em; text-transform:uppercase }
+  .codeblk .kw{ color:#ffae42 } .codeblk .str{ color:#6ee7b7 } .codeblk .cm{ color:#8b949e } .codeblk .num{ color:#9abaff }
+
+  .toc-wrap{ padding:var(--space-3); border:1px solid #e5e7eb; border-radius:12px; background:#fff; }
+  .toc-title{ font-size:1.35rem; font-weight:800; margin-bottom:var(--space-2); }
+  .toc a{ text-decoration:none; color:#4b5563; }
+  .toc a:hover{ color:#000; }
+  .toc li{ margin:.55rem 0; }
+  .sticky-top{ top:100px; }
+
+  .navbar .nav-link{ color:#000 !important; font-weight:500; }
+  .navbar .nav-link:hover,.navbar .nav-link:focus{ color:#ff7a00 !important; }
+  .navbar .navbar-brand{ color:#000 !important; font-weight:700; }
+
+  /* Ensure white tagline on purple hero */
+  .text-secondary { color:#ffffff !important; }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <nav class="navbar navbar-expand-md fixed-top" id="navbar" aria-label="Main Navigation" data-navbar-soft-on-scroll="data-navbar-soft-on-scroll">
+    <div class="container-fluid px-0">
+      <a class="navbar-brand fw-bold d-none d-md-block" href="index.html">Ondevtra</a>
+      <button class="navbar-toggler border-0 pe-0" type="button" data-bs-toggle="collapse"
+              data-bs-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-md-end" id="navbar-content">                                                        
+              <ul class="navbar-nav gap-md-2 gap-lg-3 pt-x1 pb-1 pt-md-0 pb-md-0" data-navbar-nav="data-navbar-nav">
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#home">Home</a></li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#about">About</a></li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link lh-xl" href="#" id="navbarDropdownBlog" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Blog
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="navbarDropdownBlog">
+                    <li><a class="dropdown-item" href="ai-business-solutions.html">AI Business Solutions</a></li>
+                    <li><a class="dropdown-item" href="ai-outfit-generator.html">AI Outfit Generator</a></li>
+                    <li><a class="dropdown-item" href="aivoicegenerator.html">AI Voice Generator</a></li>
+                    <li><a class="dropdown-item" href="futurejobs.html">Future Jobs</a></li>
+                    <li><a class="dropdown-item" href="aiquizmaker.html">Quiz Maker</a></li>
+                    <li><a class="dropdown-item" href="webdevelopment.html">Web Development</a></li>
+                    <li><a class="dropdown-item" href="Transcribe.html">Transcribe App</a></li>
+                    <li><a class="dropdown-item" href="SpeechtoTextApp.html">Speech to Text App</a></li>
+                    <li><a class="dropdown-item" href="AIWealth.html">AI and Wealth</a></li>
+                    <li><a class="dropdown-item" href="ChatGPT.html">ChatGPT</a></li>
+                    <li><a class="dropdown-item" href="GenerativeAI.html">Generative AI</a></li>
+                  </ul>
+                </li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#service">Support</a></li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#pricing">Pricing</a></li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#contact">Contact</a></li>
+              </ul>
+            </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero-section overflow-hidden position-relative z-0 mb-4 mb-lg-0 pt-7" id="home" aria-label="Hero section">
+    <div class="hero-background">
+      <div class="container">
+        <div class="row gy-4 gy-md-8 pt-9 pt-lg-6 align-items-center">
+          <div class="col-lg-6 text-center text-lg-start">
+            <h1 class="fw-bold mb-3">Power Gating in VLSI</h1>
+            <p class="lead mb-4 text-secondary">
+              Cut leakage safely, wake fast, and keep timing clean. Learn domains, power switches, isolation & retention cells, sequencing, and verification.
+            </p>
+            <div class="d-flex justify-content-center justify-content-lg-start gap-2">
+              <a class="btn btn-primary btn-lg lh-xl" href="#intro">Start reading</a>
+            </div>
+            <div class="mt-3">
+              <span class="topic-chip">Low Power</span>
+              <span class="topic-chip">Power Gating</span>
+              <span class="topic-chip">Isolation / Retention</span>
+              <span class="topic-chip">Sequencing</span>
+            </div>
+          </div>
+          <div class="col-lg-6 text-center">
+            <img class="img-fluid rounded" src="assets/img/illustrations/powergating_cover.jpg"
+                 alt="Power gating concept cover image" decoding="async" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="position-absolute bottom-0 start-0 end-0 z-1">
+      <img class="wave mb-md-n2" src="assets/img/illustrations/Wave.svg" alt="" />
+      <div class="bg-white py-2 py-md-5"></div>
+    </div>
+  </section>
+
+  <!-- Main -->
+  <main class="container my-5">
+    <div class="row">
+      <!-- TOC -->
+      <aside class="col-lg-3 mb-4 mb-lg-0">
+        <div class="toc-wrap sticky-top">
+          <div class="toc-title">Table of contents</div>
+          <ul class="list-unstyled toc">
+            <li><a href="#intro">Introduction</a></li>
+            <li><a href="#dynamic-vs-leakage">Dynamic vs leakage power</a></li>
+            <li><a href="#when">When should you power gate?</a></li>
+            <li><a href="#impact">Impact on subsystems</a></li>
+            <li><a href="#principles">Principles of power gating</a></li>
+            <li><a href="#granularity">Fine-grain vs coarse-grain</a></li>
+            <li><a href="#flow">Design flow & checks</a></li>
+            <li><a href="#oss">Open-source friendly steps</a></li>
+            <li><a href="#challenges">Challenges & mitigations</a></li>
+            <li><a href="#best">Best practices</a></li>
+            <li><a href="#glossary">Glossary</a></li>
+            <li><a href="#conclusion">Conclusion & next steps</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Article -->
+      <article class="col-lg-9">
+        <p class="section-meta">⏱️ 15–25 min • Intermediate • Updated Aug 2025</p>
+
+        <section id="intro" class="section-pad">
+          <h2>Introduction</h2>
+          <p>
+            <strong>Power gating</strong> reduces leakage by disconnecting an idle block from the main supply through <em>power switches</em>.
+            It’s a staple of mobile, wearables, and battery-first devices, and increasingly common in servers and AI accelerators.
+            Getting it right blends floorplanning, timing, IR-drop, wake-up sequencing, isolation, and state retention.
+          </p>
+        </section>
+
+        <section id="dynamic-vs-leakage" class="section-pad">
+          <h2>Dynamic vs leakage power</h2>
+          <p>
+            <em>Dynamic power</em> (switching) dominates when logic toggles; <em>leakage power</em> dominates when logic sits idle.
+            Power gating targets leakage by turning entire regions fully off.
+          </p>
+          <figure class="my-3">
+            <img class="img-fluid rounded" src="assets/img/illustrations/dynamic_vs_leakage.jpg" alt="Dynamic vs leakage power diagram" />
+            <figcaption class="small text-secondary mt-2">Leakage rises with smaller nodes and temperature; power gating cuts it at the source.</figcaption>
+          </figure>
+        </section>
+
+        <section id="when" class="section-pad">
+          <h2>When should you power gate?</h2>
+          <ul>
+            <li>Blocks remain idle for long enough that <strong>leakage energy &gt;&gt; wake-up energy</strong>.</li>
+            <li>There’s a <strong>clean interface</strong> to clamp outputs (isolation) when off.</li>
+            <li>Wake-up latency fits your product UX and <strong>inrush current</strong> can be managed.</li>
+          </ul>
+        </section>
+
+        <section id="impact" class="section-pad">
+          <h2>Impact on subsystems</h2>
+          <p>Typical candidates: video/ISP, AI accelerators, GPU, radios, sensor hubs, and sometimes CPU clusters.</p>
+          <ul>
+            <li><strong>Always-on</strong> stays powered: PMU, RTC, wake controller, key security logic.</li>
+            <li><strong>Partially gated</strong>: blocks that retain minimal state for quick resume.</li>
+            <li><strong>Fully gated</strong>: shut off completely and reinitialize on wake.</li>
+          </ul>
+        </section>
+
+        <section id="principles" class="section-pad">
+          <h2>Principles of power gating</h2>
+          <ol>
+            <li><strong>Power switches</strong> (header PMOS or footer NMOS) create a virtual rail <code>VDD_VIRT</code>.</li>
+            <li><strong>Isolation cells</strong> clamp outputs of the off domain to avoid X-propagation.</li>
+            <li><strong>Retention flops</strong> preserve critical state on a tiny backup rail.</li>
+            <li><strong>Sequencing</strong> ensures orderly shutdown and wake-up.</li>
+          </ol>
+
+          <div class="codeblk">
+            <div class="hdr">Conceptual sequence (pseudocode)</div>
+<pre><code class="bash"><span class="cm"># Power down</span>
+assert(save_state)          <span class="cm"># pulse retention</span>
+assert(iso_enable)          <span class="cm"># clamp domain outputs</span>
+deassert(clk_enable)        <span class="cm"># stop local clocks</span>
+deassert(pwrsw_enable)      <span class="cm"># open switch, domain off</span>
+
+<span class="cm"># Power up</span>
+assert(pwrsw_enable)        <span class="cm"># close switch, ramp VDD_VIRT</span>
+wait_supply_good             <span class="cm"># settle; manage inrush with staggering</span>
+assert(clk_enable)          <span class="cm"># restore clocks</span>
+deassert(iso_enable)        <span class="cm"># de-clamp outputs</span>
+deassert(save_state)        <span class="cm"># release retention</span></code></pre>
+          </div>
+        </section>
+
+        <section id="granularity" class="section-pad">
+          <h2>Fine-grain vs coarse-grain</h2>
+          <figure class="my-3">
+            <img class="img-fluid rounded" src="assets/img/illustrations/coarse_vs_fine.jpg" alt="Coarse vs fine grain power gating diagram" />
+            <figcaption class="small text-secondary mt-2">Fine-grain gates at cell/cluster level (best leakage savings, higher area); coarse-grain gates per block (simpler, less area).</figcaption>
+          </figure>
+          <ul>
+            <li><strong>Fine-grain</strong>: library cells with built-in switches. Pros: granular savings. Cons: area & verification cost.</li>
+            <li><strong>Coarse-grain</strong>: switch rows around a macro/block. Pros: simpler rails, easier STA/IR. Cons: larger “all-or-nothing” domains.</li>
+          </ul>
+        </section>
+
+        <section id="flow" class="section-pad">
+          <h2>Design flow & checks</h2>
+          <ol>
+            <li><strong>Partition domains</strong>: always-on vs switchable; define retention scope.</li>
+            <li><strong>Intent</strong>: capture power intent (UPF-like) — supplies, switches, isolation, retention, strategies.</li>
+            <li><strong>Floorplan</strong>: add switch rows, retention islands, isolation at boundaries; plan straps for virtual rails.</li>
+            <li><strong>Timing</strong>: MCMM STA includes iso/retention delays and virtual-rail conditions (setup/hold, recovery/removal).</li>
+            <li><strong>IR/EM</strong>: analyze ramp and steady current; stagger enables; add decap.</li>
+            <li><strong>Verification</strong>: power-aware sims; X-prop checks; formal for clamp coverage.</li>
+          </ol>
+        </section>
+
+        <section id="oss" class="section-pad">
+          <h2>Open-source friendly steps</h2>
+          <p>While full UPF sign-off is proprietary, you can still prototype the structure with open tools:</p>
+
+          <div class="codeblk">
+            <div class="hdr">PDN & virtual rail sketch (OpenROAD Tcl)</div>
+<pre><code class="tcl"><span class="cm"># Pseudo-steps: create global & virtual nets</span>
+set ::power_net  VDD
+set ::ground_net VSS
+# create_virtual_pdn VDD_VIRT -from VDD -through switch_rows  <span class="cm"># conceptually</span>
+
+<span class="cm"># Plan switch rows near the gated block (illustrative)</span>
+# add_power_switch_row -inst_prefix SW_ -region {x1 y1 x2 y2} -rail VDD_VIRT -control pwrsw_enable
+
+<span class="cm"># Straps to feed the virtual rail (illustrative)</span>
+# add_pdn_stripe -net VDD_VIRT -layer M5 -width 0.8 -pitch 30 -offset 10</code></pre>
+          </div>
+
+          <div class="codeblk">
+            <div class="hdr">STA hooks (OpenSTA)</div>
+<pre><code class="tcl">read_liberty stdcells_tt.lib
+read_verilog top_netlist.v
+link_design top
+
+<span class="cm"># Iso cell delay modeled in .lib; ensure iso_enable timing is constrained</span>
+create_clock -name CORE_CLK -period 2.0 [get_ports clk]
+set_clock_gating_check -setup 0.1 -hold 0.1
+
+<span class="cm"># Modeled wake-up path checks (recovery/removal on retention/iso)</span>
+report_checks -path_delay min_max -fields {slew capacitance} -digits 3</code></pre>
+          </div>
+
+          <p class="small text-secondary">These snippets are illustrative to mirror real flows; adapt to your library and PDN scripts.</p>
+        </section>
+
+        <section id="challenges" class="section-pad">
+          <h2>Challenges & mitigations</h2>
+          <figure class="my-3">
+            <img class="img-fluid rounded" src="assets/img/illustrations/powergating_challenges.jpg" alt="Power gating challenges diagram" />
+            <figcaption class="small text-secondary mt-2">Key risks: IR drop, inrush current, state loss, X-propagation, and long wake latency.</figcaption>
+          </figure>
+          <ul>
+            <li><strong>IR drop & inrush</strong>: stagger switch enables, add decap, ramp clocks slowly.</li>
+            <li><strong>State loss</strong>: choose retention set carefully; autosave before power-down.</li>
+            <li><strong>X-propagation</strong>: isolation on <em>all</em> outbound signals from the off domain.</li>
+            <li><strong>Long wake latency</strong>: warm caches, prefetch code, or keep a tiny “always-warm” island.</li>
+          </ul>
+        </section>
+
+        <section id="best" class="section-pad">
+          <h2>Best practices</h2>
+          <ul>
+            <li>Start with <strong>coarse-grain</strong> gating for first silicon; refine later.</li>
+            <li>Document a <strong>single power sequence</strong> and test it end-to-end early.</li>
+            <li>Track <strong>wake energy</strong> and <strong>latency</strong> against UX goals.</li>
+            <li>Automate checks: iso coverage, retention coverage, clamp value review.</li>
+          </ul>
+        </section>
+
+        <section id="glossary" class="section-pad">
+          <h2>Glossary</h2>
+          <ul>
+            <li><strong>Isolation cell</strong>: forces a safe 0/1 on outputs of an off domain.</li>
+            <li><strong>Retention flop</strong>: preserves state on a backup rail while domain is off.</li>
+            <li><strong>Inrush current</strong>: surge when powering a big domain; can brown-out rails.</li>
+            <li><strong>Header/footer switch</strong>: PMOS/NMOS device that forms the power gate.</li>
+          </ul>
+        </section>
+
+        <section id="conclusion" class="section-pad">
+          <h2>Conclusion & next steps</h2>
+          <p>
+            Power gating is the most effective way to kill leakage in idle blocks. The engineering art lives in partitioning, rails, and sequencing.
+            Prototype with open tools, measure wake energy/latency, and move toward a robust sign-off flow as the design matures.
+          </p>
+        </section>
+
+        <section id="faq" class="section-pad">
+          <h2>FAQ</h2>
+          <p><strong>Header or footer switches?</strong> Either works; PMOS headers leak less, NMOS footers are smaller with better drive.</p>
+          <p><strong>Do I need retention everywhere?</strong> No. Retain only the minimal state to meet resume goals.</p>
+          <p><strong>How do I limit inrush?</strong> Gate enable in phases, add decap, and keep clocks slow during ramp.</p>
+        </section>
+
+        <section class="section-pad">
+          <p class="mb-2">You might also like</p>
+          <ul>
+            <li><a href="physicaldesign.html">VLSI Physical Design</a></li>
+            <li><a href="sta.html">Static Timing Analysis (STA)</a></li>
+            <li><a href="routing.html">Routing</a></li>
+          </ul>
+        </section>
+
+      </article>
+    </div>
+  </main>
+
+  <!-- Contact -->
+  <section class="bg-300 position-relative z-0" id="contact">
+    <div class="container py-8 py-lg-9">
+      <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7 text-center">
+          <h2 class="fs-4 fs-lg-3 fw-bold mb-2 lh-sm">Get in Touch</h2>
+          <p class="fs-8 mb-5 lh-lg">Questions about low power design or tool flows? Ping us.</p>
+          <a href="mailto:info@ondevtra.com" class="btn btn-lg btn-primary lh-xl mb-3">Contact Us</a>
+          <p class="mb-0">We’ll respond promptly. Email: <a href="mailto:info@ondevtra.com">info@ondevtra.com</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="position-absolute bottom-0 end-0 z-n1 d-none d-lg-block">
+      <img src="assets/img/illustrations/Green_dots.svg" alt="" />
+    </div>
+    <div class="position-relative bottom-0 start-0 z-1">
+      <img class="img-fluid w-100" src="assets/img/illustrations/Wave_3.svg" alt="" />
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <section class="py-6 bg-100" id="discover-more">
+    <div class="container">
+      <div class="row justify-content-center text-center mb-5">
+        <div class="col-12 col-lg-10">
+          <h2 class="fs-4 fs-lg-3 fw-bold lh-sm mb-3">Explore More from Ondevtra AI</h2>
+          <p class="fs-8 lh-lg mb-0">Jump into our other AI guides, tools, and resources to keep learning.</p>
+        </div>
+      </div>
+      <div class="row g-4">
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone1 text-decoration-none h-100" href="SpeechtoTextApp.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-robot"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">AI Speech to Text App | Real-Time Transcription &amp; Voice Typing Software | Ondevtra</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone2 text-decoration-none h-100" href="Transcribe.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-microphone"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">Transcribe App - Ondevtra Technologies</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone3 text-decoration-none h-100" href="ai-outfit-generator.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-rocket"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">AI Outfit Generator : Personal AI Stylist | Ondevtra</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone4 text-decoration-none h-100" href="ai.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-lightbulb-alt"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">Artificial Intelligence - Ondevtra Technologies</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone5 text-decoration-none h-100" href="aiquizmaker.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-atom"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">AI Quiz Generator: Create Automated Quizzes Instantly | Ondevtra</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone1 text-decoration-none h-100" href="aivoicegenerator.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-brain"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">AI Voice Generator - Create Natural Voiceovers | Ondevtra Technologies</h3>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<section class="py-6" id="app-downloads">
+    <div class="container">
+      <div class="row justify-content-center text-center mb-5">
+        <div class="col-12 col-lg-10">
+          <h2 class="fs-4 fs-lg-3 fw-bold lh-sm mb-3">Scan &amp; Download Our AI Apps</h2>
+          <p class="fs-8 lh-lg mb-0">Use these QR codes or tap the badges to jump straight to the App Store.</p>
+        </div>
+      </div>
+      <div class="row g-4 justify-content-center">
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="px-4 py-4 border rounded-3 shadow-sm bg-white text-center h-100">
+            <div class="d-flex flex-column align-items-center gap-3">
+              <img src="assets/img/illustrations/ai_voice_generator.jpg" alt="AI Voice Generator app preview" class="img-fluid rounded-3" style="max-width: 180px;" loading="lazy"/>
+              <img class="img-fluid rounded-3" style="max-width: 220px;" src="assets/img/illustrations/qr-code-aivoicegenerator.jpg" alt="QR code for AI Voice Generator app" loading="lazy"/>
+              <a class="appstore-badge d-inline-block" href="https://apps.apple.com/us/app/voice-generator-text-to-speech/id1501788870" aria-label="Download AI Voice Generator on the App Store">
+                <img class="d-block mx-auto"
+                     src="assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.svg"
+                     onerror="this.onerror=null;this.src='assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.jpeg';"
+                     alt="Download on the App Store" width="180" height="60"/>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="px-4 py-4 border rounded-3 shadow-sm bg-white text-center h-100">
+            <div class="d-flex flex-column align-items-center gap-3">
+              <img src="assets/img/illustrations/fashionstylist1.png" alt="AI Outfit Generator app icon" width="96" height="96" loading="lazy"/>
+              <img class="img-fluid rounded-3" style="max-width: 220px;" src="assets/img/illustrations/qr-code-aioutfitgenerator.jpg" alt="QR code for AI Outfit Generator app" loading="lazy"/>
+              <a class="appstore-badge d-block mx-auto" href="https://apps.apple.com/app/ai-outfit-generator-stylist/id6753270026" aria-label="Download AI Outfit Generator on the App Store">
+                <img src="assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.svg"
+                     onerror="this.onerror=null;this.src='assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.jpeg';"
+                     alt="Download on the App Store" width="180" height="60"/>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+<footer class="pt-7 pt-lg-8">
+    <div class="container">
+      <div class="row gy-4 g-md-3 border-bottom pb-8 pb-lg-9 justify-content-center">
+        <div class="col-6 col-md-3">
+          <p class="mb-2 lh-lg ls-1">Company</p>
+          <ul class="list-unstyled text-1100">
+            <li class="mb-1"><a class="ls-1 lh-xl" href="index.html#about">About us</a></li>
+            <li class="mb-1"><a class="ls-1 lh-xl" href="index.html#contact">Contact us</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-md-3">
+          <ul class="list-unstyled text-1100">
+            <li class="mb-1"><a class="ls-1 lh-xl" href="privacypolicy.html">Privacy</a></li>
+            <li class="mb-1"><a class="ls-1 lh-xl" href="termsandcondition.html">Terms &amp; Conditions</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="row gy-2 py-3 justify-content-center justify-content-md-between">
+        <div class="col-auto ps-0">
+          <p class="text-center text-md-start lh-xl text-1100">© <span id="year"></span> Copyright, All Right Reserved, <a class="fw-semi-bold" href="https://ondevtra.com/">Ondevtra Technologies</a> ❤️</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Article",
+    "headline":"Power Gating in VLSI — Concepts, Trade-offs & Practical Flow",
+    "description":"Learn dynamic vs leakage power, when to gate, fine- vs coarse-grain strategies, isolation & retention cells, wake-up sequencing, verification, and open-source friendly flows.",
+    "image":"https://ondevtra.com/assets/img/illustrations/powergating_cover.jpg",
+    "author":{"@type":"Organization","name":"Ondevtra AI"},
+    "publisher":{"@type":"Organization","name":"Ondevtra AI","logo":{"@type":"ImageObject","url":"https://ondevtra.com/assets/img/favicons/favicon-32x32.png"}},
+    "datePublished":"2025-08-27",
+    "dateModified":"2025-08-27",
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://ondevtra.com/power-gating.html"}
+  }
+  </script>
+
+  <script src="vendors/popper/popper.min.js" defer></script>
+  <script src="vendors/bootstrap/bootstrap.min.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const y = document.getElementById('year');
+      if (y) y.textContent = new Date().getFullYear();
+    });
+  </script>
+</body>
+</html>

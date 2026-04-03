@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" data-bs-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+  <title>AI Outfit Generator : Personal AI Stylist | Ondevtra</title>
+  <link rel="canonical" href="https://ondevtra.com/ai-outfit-generator.html" />
+  <meta name="description" content="Visualize any outfit with AI Outfit Generator, your personal stylist app. Try clothes virtually before buying. Available on the App Store." />
+            <meta name="keywords" content="AI stylist, outfit generator, virtual try-on, fashion AI, wardrobe, style assistant, iOS app, Ondevtra" />
+<meta name="robots" content="index,follow,max-image-preview:large" />
+  <meta name="author" content="Ondevtra AI" />
+
+  <!-- Social -->
+  <meta property="og:title" content="AI Outfit Generator : Personal AI Stylist" />
+  <meta property="og:description" content="Visualize any outfit with AI Outfit Generator, your personal stylist app. Try clothes virtually before buying. Available on the App Store." />
+  <meta property="og:image" content="https://raw.githubusercontent.com/guris12/OutfitImages/main/model-after.png" />
+  <meta property="og:url" content="https://ondevtra.com/ai-outfit-generator.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Ondevtra" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Fonts & theme you already use -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vendors/swiper/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css" />
+  <link href="assets/css/theme-v2.min.css?v=1" rel="stylesheet" id="style-default" />
+
+  <!-- Favicons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicons/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicons/favicon-16x16.png" />
+  <link rel="shortcut icon" href="assets/img/favicons/favicon.ico" />
+  <link rel="manifest" href="assets/img/favicons/manifest.json" />
+  <meta name="theme-color" content="#0d6efd" />
+
+  <style>
+    :root{ --yellow:#FDE047; --ink:#f1f5f9; --muted:#9CA3AF; --bg:#000; --panel:#0b0f17; }
+    html{scroll-behavior:smooth}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.7;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+
+    /* Navbar override so links are readable on dark hero */
+    .navbar .nav-link{color:#fff!important;font-weight:500}
+    .navbar .nav-link:hover,.navbar .nav-link:focus{color:var(--yellow)!important}
+    .navbar .navbar-brand{color:#fff!important;font-weight:700}
+
+    /* Hero */
+    .hero{position:relative;min-height:88vh;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+    .hero .bg{position:absolute;inset:0;opacity:.28}
+    .hero .bg img{width:100%;height:100%;object-fit:cover;object-position:top;filter:saturate(.95)}
+    .hero .overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.9),rgba(20,20,20,.65),rgba(0,0,0,.95));}
+    .hero h1{font-weight:800;letter-spacing:-.01em;color:var(--yellow);text-shadow:0 1px 18px rgba(0,0,0,.6)}
+    .hero p.lead{color:#e5e7eb;max-width:720px;margin:1rem auto 0}
+
+    /* Sections */
+    section{scroll-margin-top:100px}
+    .section-pad{padding:4rem 0}
+    .card-dark{background:#0c111b;border:1px solid #111827;border-radius:16px;color:#d1d5db}
+
+    /* Compare slider */
+    .compare-card{position:relative;width:clamp(120px, 18vw, 200px);aspect-ratio:3/4;margin-inline:auto;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.45);overflow:hidden;background:#0a0a0a}
+    .compare-card img{display:block;width:100%;height:100%;object-fit:cover}
+    .compare-card .after{position:absolute;inset:0;clip-path:inset(0 0 0 50%)}
+    .compare-card .divider{position:absolute;top:0;bottom:0;left:50%;width:2px;background:#fff}
+    .compare-card .handle{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:999px;background:#fff;box-shadow:0 6px 16px rgba(0,0,0,.25);display:grid;place-items:center}
+    .compare-card input[type="range"]{position:absolute;inset:0;opacity:0;cursor:ew-resize}
+
+    /* Image rules (global) */
+    img{max-width:100%;height:auto}
+    .figure-max{max-width:200px}
+
+    /* Utilities */
+    .text-yellow{color:var(--yellow)!important}
+    .muted{color:#cbd5e1}
+    .btn-pill{border-radius:999px;font-weight:700;padding:.8rem 1.35rem}
+    .btn-cta{background:#fff;color:#000}
+    .btn-cta:hover{filter:brightness(.92)}
+
+    /* Fade-in (IO) */
+    .fadein{opacity:0;transform:translateY(22px);transition:opacity .8s ease,transform .8s ease}
+    .fadein.visible{opacity:1;transform:none}
+
+    /* Section backgrounds */
+    .panel{background:var(--panel)}
+  
+    /* === Visibility fix: Why It Wins + Footer Company === */
+    .card-dark{background:#0f172a;border-color:#1f2937;color:#e5e7eb}
+    .card-dark h3{color:#ffffff}
+    .card-dark .muted,.card-dark p{color:#e5e7eb}
+    .card-dark .fs-2{color:var(--yellow)}
+
+    footer{background:#0a0f18}
+    footer p,footer li,footer a,footer .text-1100{color:#e5e7eb!important}
+    footer .ls-1, footer .lh-xl{color:#ffffff!important}
+    footer a:hover{color:var(--yellow)!important;text-decoration:underline}
+
+    /* Optional: raise contrast in any dark panel section */
+    .panel h2,.panel h3{color:#ffffff}
+    .panel p,.panel li,.panel ol,.panel .muted{color:#e5e7eb}
+  
+    /* === Smaller global font & hero heading === */
+    body{font-size:0.94rem}
+    .lead{font-size:1.05rem}
+    .hero h1.display-4{font-size:clamp(1.5rem,3.8vw,2rem)}
+    .card-dark h3{font-size:1rem}
+  
+    /* === Uniform typography size per request === */
+    :root{ --text-size: 1.05rem; }
+    body{ font-size: var(--text-size) !important; }
+    p, li, a, small, span, .lead{ font-size: var(--text-size) !important; line-height: 1.7; }
+    h1, h2, h3, h4, h5, h6, .display-4{ font-size: var(--text-size) !important; font-weight: inherit; letter-spacing: normal; }
+    .navbar .nav-link, .dropdown-item, .btn{ font-size: var(--text-size) !important; }
+    .hero h1.display-4{ font-size: var(--text-size) !important; text-shadow: 0 1px 18px rgba(0,0,0,.6); }
+    .card-dark h3{ font-size: var(--text-size) !important; }
+  
+    /* Promo strip (5 images before tagline) */
+    .promo-strip{max-width:960px;margin-inline:auto;margin-top:0.5rem;margin-bottom:0.75rem}
+    .promo-strip .inner{display:flex;gap:12px;align-items:center;justify-content:center;overflow-x:auto;padding:4px 6px}
+    .promo-thumb{width:clamp(64px,10vw,96px);height:auto;border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.35);background:#0b0f17}
+    .promo-logo{width:clamp(56px,8vw,80px);aspect-ratio:1/1;border-radius:22%}
+  
+    /* App icon and App Store badge */
+    .app-logo{width:clamp(48px,8vw,72px);height:auto;display:block;margin-bottom:.35rem}
+    .appstore-badge img{height:clamp(120px,22vw,240px);width:auto;display:block;filter:drop-shadow(0 8px 26px rgba(0,0,0,.5));max-width:none}
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <nav class="navbar navbar-expand-md fixed-top" id="navbar" aria-label="Main Navigation" data-navbar-soft-on-scroll="data-navbar-soft-on-scroll" style="background:rgba(0,0,0,.45);backdrop-filter:saturate(180%) blur(10px)">
+    <div class="container-fluid px-3">
+      <a class="navbar-brand fw-bold d-none d-md-block" href="index.html">Ondevtra</a>
+      <button class="navbar-toggler border-0 pe-0" type="button" data-bs-toggle="collapse"
+              data-bs-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse justify-content-md-end" id="navbar-content">                                                        
+              <ul class="navbar-nav gap-md-2 gap-lg-3 pt-x1 pb-1 pt-md-0 pb-md-0" data-navbar-nav="data-navbar-nav">
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#home">Home</a></li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#about">About</a></li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link lh-xl" href="#" id="navbarDropdownBlog" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Blog
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="navbarDropdownBlog">
+                    <li><a class="dropdown-item" href="ai-business-solutions.html">AI Business Solutions</a></li>
+                    <li><a class="dropdown-item" href="ai-outfit-generator.html">AI Outfit Generator</a></li>
+                    <li><a class="dropdown-item" href="aivoicegenerator.html">AI Voice Generator</a></li>
+                    <li><a class="dropdown-item" href="futurejobs.html">Future Jobs</a></li>
+                    <li><a class="dropdown-item" href="aiquizmaker.html">Quiz Maker</a></li>
+                    <li><a class="dropdown-item" href="webdevelopment.html">Web Development</a></li>
+                    <li><a class="dropdown-item" href="Transcribe.html">Transcribe App</a></li>
+                    <li><a class="dropdown-item" href="SpeechtoTextApp.html">Speech to Text App</a></li>
+                    <li><a class="dropdown-item" href="AIWealth.html">AI and Wealth</a></li>
+                    <li><a class="dropdown-item" href="ChatGPT.html">ChatGPT</a></li>
+                    <li><a class="dropdown-item" href="GenerativeAI.html">Generative AI</a></li>
+                  </ul>
+                </li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#service">Support</a></li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#pricing">Pricing</a></li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#contact">Contact</a></li>
+              </ul>
+            </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="home" aria-label="Hero section">
+    <div class="bg"><img src="https://raw.githubusercontent.com/guris12/OutfitImages/main/model-after.png" alt="Fashion background" decoding="async" loading="eager"></div>
+    <div class="overlay" aria-hidden="true"></div>
+    <div class="container position-relative">
+      <div class="row justify-content-center">
+        <div class="col-12 col-lg-10">
+          $1<div class="promo-strip"><div class="inner">
+  <img class="promo-thumb" src="assets/img/illustrations/ai-stylist-iphone3.jpg" alt="AI Stylist screen: style ideas" loading="eager" width="96" height="192"/>
+  <img class="promo-thumb" src="assets/img/illustrations/ai-stylist-iphone4.jpg" alt="AI Stylist screen: accessories" loading="lazy" width="96" height="192"/>
+  <img class="promo-thumb" src="assets/img/illustrations/ai-stylist-mobile.jpg" alt="AI Stylist mobile preview" loading="lazy" width="96" height="192"/>
+  <img class="promo-thumb" src="assets/img/illustrations/ai-stylist-mobileios.jpg" alt="AI Stylist iOS preview" loading="lazy" width="96" height="192"/>
+  <img class="promo-logo" src="assets/img/illustrations/fashionstylist1.png" alt="AI Outfit Generator app icon" loading="lazy" width="80" height="80"/>
+</div></div>
+<p class="lead mb-4">See outfits before you buy — turn product or wardrobe photos into inclusive, photoreal on‑model looks.</p>
+          <div class="d-flex flex-column align-items-center gap-2 flex-wrap">
+  <img class="app-logo" src="assets/img/illustrations/fashionstylist1.png" alt="AI Outfit Generator app icon" width="72" height="72" loading="eager"/>
+  <a class="appstore-badge" href="https://apps.apple.com/app/ai-outfit-generator-stylist/id6753270026" aria-label="Download on the App Store">
+    <img src="assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.svg" onerror="this.onerror=null;this.src='assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.jpeg';" alt="Download on the App Store" width="180" height="60"/>
+  </a>
+</div>
+        </div>
+      </div>
+
+      <div class="row g-4 mt-5 mt-lg-6 justify-content-center">
+  <!-- Slider 1: female -->
+  <!-- <div class="col-12 col-md-6 d-flex justify-content-center">
+    <div class="compare-card" role="group" aria-label="Before after compare (female)">
+      <img src="https://raw.githubusercontent.com/guris12/OutfitImages/main/product-before.png" alt="Product before (female)" loading="lazy" />
+      <img class="after" src="https://raw.githubusercontent.com/guris12/OutfitImages/main/model-after.png" alt="On‑model after (female)" loading="lazy" />
+      <div class="divider" aria-hidden="true"></div>
+      <div class="handle" aria-hidden="true">↔</div>
+      <input type="range" min="0" max="100" value="50" aria-label="Reveal after image" />
+    </div>
+  </div> -->
+
+  <!-- Slider 2: male -->
+  <!-- <div class="col-12 col-md-6 d-flex justify-content-center">
+    <div class="compare-card" role="group" aria-label="Before after compare (male)">
+      <img src="https://raw.githubusercontent.com/guris12/OutfitImages/main/product-before-male.png" alt="Product before (male)" loading="lazy" />
+      <img class="after" src="https://raw.githubusercontent.com/guris12/OutfitImages/main/model-after-male.png" alt="On‑model after (male)" loading="lazy" />
+      <div class="divider" aria-hidden="true"></div>
+      <div class="handle" aria-hidden="true">↔</div>
+      <input type="range" min="0" max="100" value="50" aria-label="Reveal after image" />
+    </div>
+  </div> -->
+
+  <!-- Slider 3: female 2 -->
+  <div class="col-12 col-md-6 d-flex justify-content-center">
+    <div class="compare-card" role="group" aria-label="Before after compare (female 2)">
+      <img src="https://raw.githubusercontent.com/guris12/OutfitImages/main/product-before-2.png" alt="Product before (female 2)" loading="lazy" />
+      <img class="after" src="https://raw.githubusercontent.com/guris12/OutfitImages/main/model-after-2.png" alt="On‑model after (female 2)" loading="lazy" />
+      <div class="divider" aria-hidden="true"></div>
+      <div class="handle" aria-hidden="true">↔</div>
+      <input type="range" min="0" max="100" value="50" aria-label="Reveal after image" />
+    </div>
+  </div>
+
+  <!-- Slider 4: male 2 -->
+  <div class="col-12 col-md-6 d-flex justify-content-center">
+    <div class="compare-card" role="group" aria-label="Before after compare (male 2)">
+      <img src="https://raw.githubusercontent.com/guris12/OutfitImages/main/product-before-male-2.png" alt="Product before (male 2)" loading="lazy" />
+      <img class="after" src="https://raw.githubusercontent.com/guris12/OutfitImages/main/model-after-male-2.png" alt="On‑model after (male 2)" loading="lazy" />
+      <div class="divider" aria-hidden="true"></div>
+      <div class="handle" aria-hidden="true">↔</div>
+      <input type="range" min="0" max="100" value="50" aria-label="Reveal after image" />
+    </div>
+  </div>
+</div>
+</div>
+</section>
+
+  <!-- Problem -->
+  <section class="section-pad">
+    <div class="container">
+      <div class="row align-items-center g-4">
+        <div class="col-md-6">
+          <h2 class="fw-bold mb-3 text-yellow">The Problem</h2>
+          <ul class="text-light fs-5 mb-0">
+            <li class="mb-2">Shoppers can’t visualize clothes on their body → hesitation, fewer purchases.</li>
+            <li class="mb-2">Return rates stay high due to fit & style uncertainty.</li>
+            <li>On‑model photography is slow, costly, and not diverse enough.</li>
+          </ul>
+        </div>
+        <div class="col-md-6 text-center">
+          <img class="figure-max rounded-3 shadow" src="https://raw.githubusercontent.com/guris12/OutfitImages/main/product-before.png" alt="Flat product photo" loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Solution -->
+  <section class="section-pad panel">
+    <div class="container">
+      <div class="row align-items-center g-4">
+        <div class="col-md-6 order-md-2 text-center">
+          <img class="figure-max rounded-3 shadow" src="https://raw.githubusercontent.com/guris12/OutfitImages/main/model-after.png" alt="On‑model result" loading="lazy" />
+        </div>
+        <div class="col-md-6 order-md-1">
+          <h2 class="fw-bold mb-3 text-yellow">Our Solution</h2>
+          <ul class="text-light fs-5 mb-0">
+            <li class="mb-2">Transform existing product photos into photoreal, on‑model looks in seconds.</li>
+            <li class="mb-2">Create diverse assets across sizes, tones, poses & angles instantly.</li>
+            <li>No studios. No delays. Ready‑to‑use images for PDPs and ads.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits -->
+  <section class="section-pad">
+    <div class="container">
+      <h2 class="fw-bold text-center mb-4 text-yellow">Why It Wins</h2>
+      <div class="row g-4 text-center">
+        <div class="col-6 col-md-3"><div class="card-dark p-4 h-100 rounded-4"><div class="fs-2 mb-2">📈</div><h3 class="fs-5 fw-bold">Boost Conversion</h3><p class="mb-0 muted">Seeing is believing: realistic previews help shoppers commit.</p></div></div>
+        <div class="col-6 col-md-3"><div class="card-dark p-4 h-100 rounded-4"><div class="fs-2 mb-2">📦</div><h3 class="fs-5 fw-bold">Reduce Returns</h3><p class="mb-0 muted">Lower return rates by cutting fit & style uncertainty.</p></div></div>
+        <div class="col-6 col-md-3"><div class="card-dark p-4 h-100 rounded-4"><div class="fs-2 mb-2">👥</div><h3 class="fs-5 fw-bold">Inclusive Imagery</h3><p class="mb-0 muted">Show products on diverse bodies, tones, and poses.</p></div></div>
+        <div class="col-6 col-md-3"><div class="card-dark p-4 h-100 rounded-4"><div class="fs-2 mb-2">🖼️</div><h3 class="fs-5 fw-bold">Instant Assets</h3><p class="mb-0 muted">Generate ready‑to‑publish images for PDPs, ads & social.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section-pad panel">
+    <div class="container">
+      <div class="row align-items-center g-4">
+        <div class="col-md-6">
+          <h2 class="fw-bold mb-3 text-yellow">How It Works</h2>
+          <ol class="fs-5 text-light mb-0">
+            <li class="mb-2">Upload your garment photo (flat or ghost mannequin).</li>
+            <li class="mb-2">Pick model size, pose, tone & angle.</li>
+            <li class="mb-2">Generate on‑model variants instantly.</li>
+            <li>Download and publish — storefront, ads, socials.</li>
+          </ol>
+        </div>
+        <div class="col-md-6 text-center">
+          <img class="figure-max rounded-3 shadow" src="https://raw.githubusercontent.com/guris12/OutfitImages/main/how-it-works-ui.png" alt="App UI" loading="lazy" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section-pad text-center">
+    <div class="container">
+      <h2 class="fw-bold mb-3 text-yellow">Ready to style smarter?</h2>
+      <p class="fs-5 muted mb-4">Experience virtual try‑on, reduce returns, and boost conversions — no studio required.</p>
+      <div class="d-flex flex-column align-items-center">
+  <img class="app-logo" src="assets/img/illustrations/fashionstylist1.png" alt="AI Outfit Generator app icon" width="72" height="72" loading="lazy"/>
+  <a class="appstore-badge mt-2" href="https://apps.apple.com/app/ai-outfit-generator-stylist/id6753270026" aria-label="Download on the App Store">
+    <img src="assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.svg" onerror="this.onerror=null;this.src='assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.jpeg';" alt="Download on the App Store" width="180" height="60"/>
+  </a>
+</div>
+      <p class="mt-4 text-secondary">Questions? Email <a class="link-light" href="mailto:hello@ondevtra.com">hello@ondevtra.com</a></p>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="bg-300 position-relative z-0" id="contact">
+    <div class="container py-8 py-lg-9">
+      <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7 text-center">
+          <h2 class="fs-4 fs-lg-3 fw-bold mb-2 lh-sm">Get in Touch</h2>
+          <p class="fs-8 mb-5 lh-lg">Questions about the app, integrations or pricing? We’re here to help.</p>
+          <a href="mailto:hello@ondevtra.com" class="btn btn-lg btn-primary lh-xl mb-3">Contact Us</a>
+          <p class="mb-0">Email: <a href="mailto:hello@ondevtra.com">hello@ondevtra.com</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="position-absolute bottom-0 end-0 z-n1 d-none d-lg-block">
+      <img src="assets/img/illustrations/Green_dots.svg" alt="" />
+    </div>
+    <div class="position-relative bottom-0 start-0 z-1">
+      <img class="img-fluid w-100" src="assets/img/illustrations/Wave_3.svg" alt="" />
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <section class="py-6 bg-100" id="discover-more">
+    <div class="container">
+      <div class="row justify-content-center text-center mb-5">
+        <div class="col-12 col-lg-10">
+          <h2 class="fs-4 fs-lg-3 fw-bold lh-sm mb-3">Explore More from Ondevtra AI</h2>
+          <p class="fs-8 lh-lg mb-0">Jump into our other AI guides, tools, and resources to keep learning.</p>
+        </div>
+      </div>
+      <div class="row g-4">
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone1 text-decoration-none h-100" href="AIWealth.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-robot"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">Unlocking Wealth with AI - Ondevtra Technologies</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone2 text-decoration-none h-100" href="GenerativeAI.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-microphone"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">Understanding Generative AI: Creating the Future - Ondevtra Technologies</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone3 text-decoration-none h-100" href="Routing.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-rocket"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">VLSI Routing with Open-Source Tools — Global, Detailed, DRC &amp; Antenna | Ondevtra</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone4 text-decoration-none h-100" href="SpeechtoTextApp.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-lightbulb-alt"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">AI Speech to Text App | Real-Time Transcription &amp; Voice Typing Software | Ondevtra</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone5 text-decoration-none h-100" href="Transcribe.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-atom"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">Transcribe App - Ondevtra Technologies</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone1 text-decoration-none h-100" href="ai.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-brain"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">Artificial Intelligence - Ondevtra Technologies</h3>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<section class="py-6" id="app-downloads">
+    <div class="container">
+      <div class="row justify-content-center text-center mb-5">
+        <div class="col-12 col-lg-10">
+          <h2 class="fs-4 fs-lg-3 fw-bold lh-sm mb-3">Scan &amp; Download Our AI Apps</h2>
+          <p class="fs-8 lh-lg mb-0">Use these QR codes or tap the badges to jump straight to the App Store.</p>
+        </div>
+      </div>
+      <div class="row g-4 justify-content-center">
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="px-4 py-4 border rounded-3 shadow-sm bg-white text-center h-100">
+            <div class="d-flex flex-column align-items-center gap-3">
+              <img src="assets/img/illustrations/ai_voice_generator.jpg" alt="AI Voice Generator app preview" class="img-fluid rounded-3" style="max-width: 180px;" loading="lazy"/>
+              <img class="img-fluid rounded-3" style="max-width: 220px;" src="assets/img/illustrations/qr-code-aivoicegenerator.jpg" alt="QR code for AI Voice Generator app" loading="lazy"/>
+              <a class="appstore-badge d-inline-block" href="https://apps.apple.com/us/app/voice-generator-text-to-speech/id1501788870" aria-label="Download AI Voice Generator on the App Store">
+                <img class="d-block mx-auto"
+                     src="assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.svg"
+                     onerror="this.onerror=null;this.src='assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.jpeg';"
+                     alt="Download on the App Store" width="180" height="60"/>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="px-4 py-4 border rounded-3 shadow-sm bg-white text-center h-100">
+            <div class="d-flex flex-column align-items-center gap-3">
+              <img src="assets/img/illustrations/fashionstylist1.png" alt="AI Outfit Generator app icon" width="96" height="96" loading="lazy"/>
+              <img class="img-fluid rounded-3" style="max-width: 220px;" src="assets/img/illustrations/qr-code-aioutfitgenerator.jpg" alt="QR code for AI Outfit Generator app" loading="lazy"/>
+              <a class="appstore-badge d-block mx-auto" href="https://apps.apple.com/app/ai-outfit-generator-stylist/id6753270026" aria-label="Download AI Outfit Generator on the App Store">
+                <img src="assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.svg"
+                     onerror="this.onerror=null;this.src='assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.jpeg';"
+                     alt="Download on the App Store" width="180" height="60"/>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+<footer class="pt-7 pt-lg-8">
+    <div class="container">
+      <div class="row gy-4 g-md-3 border-bottom pb-8 pb-lg-9 justify-content-center">
+        <div class="col-6 col-md-3">
+          <p class="mb-2 lh-lg ls-1">Company</p>
+          <ul class="list-unstyled text-1100">
+            <li class="mb-1"><a class="ls-1 lh-xl" href="index.html#about">About us</a></li>
+            <li class="mb-1"><a class="ls-1 lh-xl" href="index.html#contact">Contact us</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-md-3">
+          <ul class="list-unstyled text-1100">
+            <li class="mb-1"><a class="ls-1 lh-xl" href="privacypolicy.html">Privacy</a></li>
+            <li class="mb-1"><a class="ls-1 lh-xl" href="termsandcondition.html">Terms &amp; Conditions</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="row gy-2 py-3 justify-content-center justify-content-md-between">
+        <div class="col-auto ps-0">
+          <p class="text-center text-md-start lh-xl text-1100">© <span id="year"></span> Ondevtra Technologies. All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Schema.org -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Article",
+    "headline":"AI Outfit Generator : Personal AI Stylist",
+    "description":"Visualize any outfit with AI Outfit Generator, your personal stylist app. Try clothes virtually before buying. Available on the App Store.",
+    "image":"https://raw.githubusercontent.com/guris12/OutfitImages/main/model-after.png",
+    "author":{"@type":"Organization","name":"Ondevtra AI"},
+    "publisher":{"@type":"Organization","name":"Ondevtra AI","logo":{"@type":"ImageObject","url":"https://ondevtra.com/assets/img/favicons/favicon-32x32.png"}},
+    "datePublished":"2025-10-08",
+    "dateModified":"2025-10-08",
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://ondevtra.com/ai-outfit-generator.html"}
+  }
+  </script>
+
+  <script src="vendors/popper/popper.min.js" defer></script>
+  <script src="vendors/bootstrap/bootstrap.min.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const y = document.getElementById('year'); if (y) y.textContent = new Date().getFullYear();
+
+      // Fade-in on view
+      document.querySelectorAll('.fadein').forEach(el => {
+        const obs = new IntersectionObserver(entries => {
+          entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+        }, { rootMargin: '-100px 0px' });
+        obs.observe(el);
+      });
+
+      // Compare slider logic
+      function wireCompare(root){
+        const after=root.querySelector('.after');
+        const divider=root.querySelector('.divider');
+        const handle=root.querySelector('.handle');
+        const range=root.querySelector('input[type="range"]');
+        function setPct(v){ const pct=Math.max(0,Math.min(100,Number(v))); after.style.clipPath=`inset(0 0 0 ${pct}%)`; divider.style.left = handle.style.left = pct+'%'; }
+        range.addEventListener('input', e=> setPct(e.target.value));
+        let anim; root.addEventListener('mouseenter', ()=>{ let t=50; anim=setInterval(()=>{ t=(t+1)%100; setPct(t); }, 30); });
+        root.addEventListener('mouseleave', ()=>{ clearInterval(anim); setPct(50); });
+        setPct(50);
+      }
+      document.querySelectorAll('.compare-card').forEach(wireCompare);
+    });
+  </script>
+</body>
+</html>

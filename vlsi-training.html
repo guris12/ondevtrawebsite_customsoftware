@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" data-bs-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+  <title>Open-Source VLSI Physical Design Roadmap | Ondevtra</title>
+  <link rel="canonical" href="https://ondevtra.com/vlsi-training.html" />
+  <meta name="description" content="Master open-source VLSI physical design tools like Yosys, OpenROAD, Magic, and OpenSTA. Follow a 12-week roadmap to ship silicon-ready layouts and secure backend ASIC roles." />
+            <meta name="keywords" content="VLSI roadmap, physical design, open-source EDA, OpenROAD, Yosys, Sky130, backend ASIC, Ondevtra" />
+<meta name="robots" content="index,follow,max-image-preview:large" />
+  <meta name="author" content="Ondevtra AI" />
+
+  <!-- Social -->
+  <meta property="og:title" content="Open-Source VLSI Physical Design Roadmap | Ondevtra" />
+  <meta property="og:description" content="Master Yosys, OpenROAD, Magic, and OpenSTA in a 12-week open-source roadmap. Build silicon-ready layouts and land backend ASIC roles." />
+  <meta property="og:image" content="https://ondevtra.com/assets/img/illustrations/vlsi-hero.jpg" />
+  <meta property="og:url" content="https://ondevtra.com/vlsi-training.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="Ondevtra" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Stack you already use -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vendors/swiper/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css" />
+  <link href="assets/css/theme-v2.min.css?v=1" rel="stylesheet" id="style-default" />
+
+  <!-- Favicons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicons/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicons/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicons/favicon-16x16.png" />
+  <link rel="shortcut icon" href="assets/img/favicons/favicon.ico" />
+  <link rel="manifest" href="assets/img/favicons/manifest.json" />
+  <meta name="theme-color" content="#0d6efd" />
+
+  <!-- Page-local styling (matches your PD guides) -->
+  <style>
+    .hero-vlsi{
+      background:linear-gradient(145deg,#020712 0%,#071026 50%,#01040b 100%);
+      position:relative;
+      color:#f8fafc;
+      border-radius:0 0 36px 36px;
+      padding:6rem 0 5rem;
+    }
+    .hero-vlsi::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 18% 22%,rgba(56,189,248,.42),transparent 60%),
+        radial-gradient(circle at 80% 18%,rgba(236,72,153,.32),transparent 55%),
+        radial-gradient(circle at 45% 85%,rgba(250,204,21,.25),transparent 65%);
+      opacity:.95;
+      z-index:0;
+    }
+    .hero-vlsi .container{position:relative;z-index:1;}
+    .hero-vlsi h1{color:#f8fafc;}
+    .hero-vlsi .lead{color:#e2e8f0;}
+    .hero-vlsi .chip{
+      display:inline-flex;
+      align-items:center;
+      padding:.45rem .9rem;
+      border-radius:999px;
+      background:rgba(15,23,42,.55);
+      color:#f1f5f9;
+      font-size:.85rem;
+      border:1px solid rgba(148,163,184,.35);
+      margin-right:.4rem;
+      margin-bottom:.4rem;
+    }
+    .hero-vlsi .btn-warning{
+      box-shadow:0 20px 42px rgba(250,204,21,.35);
+      color:#0f172a;
+      font-weight:700;
+    }
+    .hero-vlsi .btn-outline-light{
+      border:1px solid rgba(248,250,252,.6);
+      color:#f8fafc;
+    }
+
+    .insight-card{
+      background:linear-gradient(180deg,#101a32 0%,#0c1526 100%);
+      border:1px solid rgba(148,163,184,.25);
+      border-radius:24px;
+      box-shadow:0 22px 48px rgba(8,12,24,.55);
+      padding:1.9rem;
+      height:100%;
+      color:#e2e8f0;
+    }
+    .insight-card h3{color:#f8fafc;font-size:1.05rem;margin-bottom:.75rem;}
+    .insight-card p{color:#cbd5f5;margin-bottom:1rem;}
+    .insight-card ul{padding-left:1.1rem;margin-bottom:0;}
+    .insight-card li{margin-bottom:.4rem;color:#cbd5f5;}
+    .insight-icon{
+      width:48px;height:48px;border-radius:16px;
+      display:inline-flex;align-items:center;justify-content:center;
+      background:rgba(59,130,246,.2);color:#93c5fd;
+      box-shadow:0 12px 24px rgba(8,12,24,.45);
+      margin-bottom:1rem;font-weight:700;
+    }
+
+    .vlsi-panel{
+      background:linear-gradient(155deg,#0f172a 0%,#111827 65%,#0b1120 100%);
+      border:1px solid rgba(148,163,184,.3);
+      border-radius:28px;
+      box-shadow:0 24px 52px rgba(8,12,24,.55);
+      padding:2.2rem;
+      color:#e2e8f0;
+      height:100%;
+    }
+    .vlsi-panel h3{color:#f8fafc;}
+    .vlsi-panel ul{padding-left:1.1rem;margin-bottom:0;}
+    .vlsi-panel li{margin-bottom:.35rem;color:#cbd5f5;}
+    .vlsi-panel img{
+      width:96px;
+      border-radius:24px;
+      box-shadow:0 12px 28px rgba(8,12,24,.45);
+    }
+
+    .roadmap-list li{margin-bottom:.6rem;color:#334155;}
+    .roadmap-list .step-badge{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:32px;height:32px;border-radius:999px;
+      background:#1d4ed8;color:#f8fafc;font-weight:700;margin-right:.75rem;
+    }
+
+    .contact-band{
+      background:linear-gradient(180deg,#0f172a 0%,#0b1120 100%);
+      color:#f8fafc;
+      border-radius:28px;
+    }
+    .contact-band .btn-outline-light{
+      border:1px solid rgba(241,245,249,.6);
+      color:#f8fafc;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <nav class="navbar navbar-expand-md fixed-top" id="navbar" aria-label="Main Navigation" data-navbar-soft-on-scroll="data-navbar-soft-on-scroll">
+    <div class="container-fluid px-0">
+      <a class="navbar-brand fw-bold d-none d-md-block" href="index.html">Ondevtra</a>
+      <button class="navbar-toggler border-0 pe-0" type="button" data-bs-toggle="collapse"
+              data-bs-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-md-end" id="navbar-content">                                                        
+              <ul class="navbar-nav gap-md-2 gap-lg-3 pt-x1 pb-1 pt-md-0 pb-md-0" data-navbar-nav="data-navbar-nav">
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#home">Home</a></li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#about">About</a></li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link lh-xl" href="#" id="navbarDropdownBlog" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Blog
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="navbarDropdownBlog">
+                    <li><a class="dropdown-item" href="ai-business-solutions.html">AI Business Solutions</a></li>
+                    <li><a class="dropdown-item" href="ai-outfit-generator.html">AI Outfit Generator</a></li>
+                    <li><a class="dropdown-item" href="aivoicegenerator.html">AI Voice Generator</a></li>
+                    <li><a class="dropdown-item" href="futurejobs.html">Future Jobs</a></li>
+                    <li><a class="dropdown-item" href="aiquizmaker.html">Quiz Maker</a></li>
+                    <li><a class="dropdown-item" href="webdevelopment.html">Web Development</a></li>
+                    <li><a class="dropdown-item" href="Transcribe.html">Transcribe App</a></li>
+                    <li><a class="dropdown-item" href="SpeechtoTextApp.html">Speech to Text App</a></li>
+                    <li><a class="dropdown-item" href="AIWealth.html">AI and Wealth</a></li>
+                    <li><a class="dropdown-item" href="ChatGPT.html">ChatGPT</a></li>
+                    <li><a class="dropdown-item" href="GenerativeAI.html">Generative AI</a></li>
+                  </ul>
+                </li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#service">Support</a></li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#pricing">Pricing</a></li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#contact">Contact</a></li>
+              </ul>
+            </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+            <section class="hero-vlsi position-relative overflow-hidden" id="home">
+            <div class="container">
+              <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                  <span class="badge hero-chip mb-3">Open-Source Physical Design</span>
+                  <h1 class="display-4 fw-bold mb-3">Master VLSI Layout &amp; Signoff with Free Tools</h1>
+                  <p class="lead mb-4">Follow a 12-week roadmap that ships silicon-ready layouts using Yosys, OpenROAD, Magic, and OpenSTA—no commercial licenses required.</p>
+                  <div class="d-flex flex-wrap mb-4">
+                    <span class="chip">OpenROAD</span>
+                    <span class="chip">Yosys</span>
+                    <span class="chip">Sky130</span>
+                    <span class="chip">Tapeout skills</span>
+                  </div>
+                  <div class="d-flex flex-wrap gap-3">
+                    <a class="btn btn-lg btn-warning text-dark fw-semibold" href="https://cal.com/ondevtra-ai-cawl6q" target="_blank" rel="noopener">Packages Start from 59,999/ for 12 weeks</a>
+                    <a class="btn btn-outline-light btn-lg" href="mailto:hello@ondevtra.com?subject=VLSI%20Physical%20Design%20Roadmap&amp;body=Hi%20Ondevtra%20team%2C%0D%0A%0D%0AHere%20is%20what%20I%27d%20like%20to%20achieve:%0D%0A" target="_blank" rel="noopener">Email our mentors</a>
+                  </div>
+                  <p class="small text-white-50 mt-3 mb-0">Designed for ASIC newcomers · Weekly labs · Recruiter-ready portfolio</p>
+                </div>
+                <div class="col-lg-6 text-center">
+                  <img class="img-fluid rounded-4 shadow-lg" src="assets/img/illustrations/vlsi-hero.jpg" alt="Engineers using neon dashboards to build VLSI layouts" loading="lazy" />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="py-8 bg-100" id="foundations">
+            <div class="container">
+              <div class="row justify-content-center text-center mb-5">
+                <div class="col-xl-8">
+                  <h2 class="fs-3 fw-bold">What you master in 12 weeks</h2>
+                  <p class="text-700">Every milestone reinforces real backend flow tasks with reproducible open-source labs.</p>
+                </div>
+              </div>
+              <div class="row g-4">
+                <div class="col-12 col-md-6 col-xl-3">
+                  <div class="insight-card h-100">
+                    <span class="insight-icon">RTL</span>
+                    <h3>RTL to netlist</h3>
+                    <p>Build clean synthesis scripts, constraint files, and QoR dashboards with Yosys + OpenSTA.</p>
+                    <ul>
+                      <li>Clock/reset design patterns</li>
+                      <li>Static timing checks at multiple corners</li>
+                      <li>Power/performance/area trade studies</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6 col-xl-3">
+                  <div class="insight-card h-100">
+                    <span class="insight-icon">🧭</span>
+                    <h3>Physical planning</h3>
+                    <p>Floorplan, macro placement, power grid, and IO plans with automated validation.</p>
+                    <ul>
+                      <li>Die/area estimation frameworks</li>
+                      <li>Macro soft/hard constraints</li>
+                      <li>IR drop + EM sanity checks</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6 col-xl-3">
+                  <div class="insight-card h-100">
+                    <span class="insight-icon">⚙️</span>
+                    <h3>Implementation flow</h3>
+                    <p>Placement, CTS, routing, and signoff steps scripted with OpenROAD and Magic.</p>
+                    <ul>
+                      <li>Clock tree balancing and skew tuning</li>
+                      <li>Route optimisation &amp; ECO loops</li>
+                      <li>Automated DRC/LVS pipelines</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6 col-xl-3">
+                  <div class="insight-card h-100">
+                    <span class="insight-icon">💼</span>
+                    <h3>Career readiness</h3>
+                    <p>Portfolio projects, resume boosters, and interview prep tailored to backend roles.</p>
+                    <ul>
+                      <li>Report dashboards &amp; design notebooks</li>
+                      <li>Mock interviews &amp; salary benchmarks</li>
+                      <li>Hiring partner introductions</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="py-8" id="roadmap">
+            <div class="container">
+              <div class="row g-5 align-items-center">
+                <div class="col-lg-6">
+                  <h2 class="fs-3 fw-bold mb-4">12-week roadmap </h2>
+                  <ul class="list-unstyled roadmap-list mb-0">
+                    <li><span class="step-badge">01</span>Week 1-2 — Linux lab setup, GitOps pipeline, RTL hygiene, constraint writing.</li>
+                    <li><span class="step-badge">02</span>Week 3-4 — Synthesis experiments, timing audit, design exploration notebooks.</li>
+                    <li><span class="step-badge">03</span>Week 5-6 — Floorplan automation, macro placement, PDN creation, IO planning.</li>
+                    <li><span class="step-badge">04</span>Week 7-8 — Global/detailed placement, CTS, clock closure, incremental STA.</li>
+                    <li><span class="step-badge">05</span>Week 9-10 — Routing strategies, congestion fixes, antenna &amp; DRC closure.</li>
+                    <li><span class="step-badge">06</span>Week 11-12 — Signoff verification, GDS export, portfolio polishing, interview prep.</li>
+                  </ul>
+                </div>
+                <div class="col-lg-6 text-center">
+                  <img class="img-fluid rounded-4 shadow-lg" src="assets/img/illustrations/vlsi-roadmap.jpg" alt="Timeline showing six sprints of the VLSI physical design roadmap" loading="lazy" />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="py-8 bg-100" id="toolchain">
+            <div class="container">
+              <div class="row text-center mb-5">
+                <div class="col">
+                  <h2 class="fs-3 fw-bold">Toolchain &amp; automation coverage</h2>
+                  <p class="text-700">Every module ships with Makefiles, Docker images, and CI pipelines so you can reproduce results anywhere.</p>
+                </div>
+              </div>
+              <div class="row g-4">
+                <div class="col-12 col-lg-6">
+                  <div class="vlsi-panel h-100">
+                    <div class="d-flex flex-column flex-md-row align-items-md-center gap-4 mb-4">
+                      <img src="assets/img/illustrations/vlsi-toolchain-lab.jpg" alt="Engineers collaborating on open-source EDA lab" loading="lazy" />
+                      <div>
+                        <h3 class="mb-2">Lab automation</h3>
+                        <p class="mb-0">Single command setup with Docker, Sky130 PDK, and reusable TCL scripts.</p>
+                      </div>
+                    </div>
+                    <ul>
+                      <li>Yosys, OpenROAD, Magic, OpenSTA, Netgen.</li>
+                      <li>Continuous integration on GitHub Actions.</li>
+                      <li>Notebook-style reporting + Jupyter dashboards.</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                  <div class="vlsi-panel h-100">
+                    <div class="d-flex flex-column flex-md-row align-items-md-center gap-4 mb-4">
+                      <img src="assets/img/illustrations/vlsi-signoff.jpg" alt="Designer reviewing signoff dashboards on neon monitors" loading="lazy" />
+                      <div>
+                        <h3 class="mb-2">Signoff readiness</h3>
+                        <p class="mb-0">Scripts to compare PPA, run ECO loops, and generate job-ready documentation.</p>
+                      </div>
+                    </div>
+                    <ul>
+                      <li>Automated DRC/LVS, timing, and power checks.</li>
+                      <li>Report diffing for ECO cycles and optimizations.</li>
+                      <li>Portfolio templates for recruiters and managers.</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="py-8" id="resources">
+            <div class="container">
+              <div class="row g-5 align-items-center">
+                <div class="col-lg-6">
+                  <h2 class="fs-3 fw-bold mb-4">Resources you get access to</h2>
+                  <ul class="list-unstyled text-700 fw-medium lh-lg mb-0">
+                    <li class="mb-3"><span class="badge rounded-pill bg-dark text-white me-2">Labs</span>Downloadable open-source labs with Makefiles, TCL, and runbooks for each step.</li>
+                    <li class="mb-3"><span class="badge rounded-pill bg-dark text-white me-2">Templates</span>Resume bullets, interview question banks, and design review slide decks.</li>
+                    <li class="mb-3"><span class="badge rounded-pill bg-dark text-white me-2">Community</span>Private Slack group, office hours, and peer review sessions.</li>
+                    <li><span class="badge rounded-pill bg-dark text-white me-2">Hiring</span>Introductions to partner fabs, startups, and automotive semiconductor teams.</li>
+                  </ul>
+                </div>
+                <div class="col-lg-6 text-center">
+                  <img class="img-fluid rounded-4 shadow-lg" src="assets/img/illustrations/vlsi-community.jpg" alt="Community of engineers reviewing VLSI projects" loading="lazy" />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="py-8" id="contact">
+            <div class="container">
+              <div class="contact-band p-5 p-lg-6 rounded-4">
+                <div class="row g-4 align-items-center">
+                  <div class="col-lg-7">
+                    <h2 class="fs-3 fw-bold mb-3 text-white">Ready to accelerate your VLSI career?</h2>
+                    <p class="mb-0" style="color: rgba(226,232,240,.85);">Share your background and goals—we’ll recommend the right roadmap, labs, and milestones for you.</p>
+                  </div>
+                  <div class="col-lg-5 text-lg-end">
+                    <div class="d-flex flex-column flex-lg-row gap-3 justify-content-lg-end">
+                      <a class="btn btn-lg btn-warning text-dark fw-semibold" href="https://cal.com/ondevtra-ai-cawl6q" target="_blank" rel="noopener">Book a discovery call</a>
+                      <a class="btn btn-outline-light btn-lg" href="mailto:hello@ondevtra.com?subject=VLSI%20roadmap%20collaboration&amp;body=Hi%20Ondevtra%20team%2C%0D%0A%0D%0AHere%20are%20my%20current%20skills:%0D%0A" target="_blank" rel="noopener">Email our mentors</a>
+                    </div>
+                    <p class="small text-white-50 mt-3 mb-0 text-lg-end">Personalised plan · Weekly accountability · Industry referrals.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+<section class="py-6 bg-100" id="discover-more">
+    <div class="container">
+      <div class="row justify-content-center text-center mb-5">
+        <div class="col-12 col-lg-10">
+          <h2 class="fs-4 fs-lg-3 fw-bold lh-sm mb-3">Explore More from Ondevtra AI</h2>
+          <p class="fs-8 lh-lg mb-0">Jump into our other AI guides, tools, and resources to keep learning.</p>
+        </div>
+      </div>
+      <div class="row g-4">
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone1 text-decoration-none h-100" href="pdfscanner.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-robot"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">AI PDF Scanner: Transform Your Document Management</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone2 text-decoration-none h-100" href="physicaldesign.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-microphone"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">How to Start Learning VLSI Physical Design — Open Source Tools Setup &amp; Roadmap | Ondevtra</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone3 text-decoration-none h-100" href="physicaldesignnew.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-rocket"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">How to Start Learning VLSI Physical Design — Open Source Tools Setup &amp; Roadmap | Ondevtra</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone4 text-decoration-none h-100" href="power-gating.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-lightbulb-alt"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">Power Gating in VLSI — Concepts, Trade-offs &amp; Practical Flow | Ondevtra</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone5 text-decoration-none h-100" href="realtime-oneway-translation.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-atom"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">One-Way Speech Translation with the Realtime API — Architecture, Code &amp; Latency Tips | Ondevtra</h3>
+            </div>
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+          <a class="discover-card discover-card--tone1 text-decoration-none h-100" href="speech-to-text-app.html">
+            <span class="discover-card-icon">
+              <span class="icon uil uil-brain"></span>
+            </span>
+            <div class="discover-card-copy">
+              <h3 class="discover-card-title lh-sm mb-0">AI Speech to Text App | Real-Time Transcription &amp; Voice Typing Software | Ondevtra</h3>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<section class="py-6" id="app-downloads">
+    <div class="container">
+      <div class="row justify-content-center text-center mb-5">
+        <div class="col-12 col-lg-10">
+          <h2 class="fs-4 fs-lg-3 fw-bold lh-sm mb-3">Scan &amp; Download Our AI Apps</h2>
+          <p class="fs-8 lh-lg mb-0">Use these QR codes or tap the badges to jump straight to the App Store.</p>
+        </div>
+      </div>
+      <div class="row g-4 justify-content-center">
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="px-4 py-4 border rounded-3 shadow-sm bg-white text-center h-100">
+            <div class="d-flex flex-column align-items-center gap-3">
+              <img src="assets/img/illustrations/ai_voice_generator.jpg" alt="AI Voice Generator app preview" class="img-fluid rounded-3" style="max-width: 180px;" loading="lazy"/>
+              <img class="img-fluid rounded-3" style="max-width: 220px;" src="assets/img/illustrations/qr-code-aivoicegenerator.jpg" alt="QR code for AI Voice Generator app" loading="lazy"/>
+              <a class="appstore-badge d-inline-block" href="https://apps.apple.com/us/app/voice-generator-text-to-speech/id1501788870" aria-label="Download AI Voice Generator on the App Store">
+                <img class="d-block mx-auto"
+                     src="assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.svg"
+                     onerror="this.onerror=null;this.src='assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.jpeg';"
+                     alt="Download on the App Store" width="180" height="60"/>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="px-4 py-4 border rounded-3 shadow-sm bg-white text-center h-100">
+            <div class="d-flex flex-column align-items-center gap-3">
+              <img src="assets/img/illustrations/fashionstylist1.png" alt="AI Outfit Generator app icon" width="96" height="96" loading="lazy"/>
+              <img class="img-fluid rounded-3" style="max-width: 220px;" src="assets/img/illustrations/qr-code-aioutfitgenerator.jpg" alt="QR code for AI Outfit Generator app" loading="lazy"/>
+              <a class="appstore-badge d-block mx-auto" href="https://apps.apple.com/app/ai-outfit-generator-stylist/id6753270026" aria-label="Download AI Outfit Generator on the App Store">
+                <img src="assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.svg"
+                     onerror="this.onerror=null;this.src='assets/img/illustrations/download-on-the-app-store-apple-logo-svgrepo-com.jpeg';"
+                     alt="Download on the App Store" width="180" height="60"/>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+<footer class="pt-7 pt-lg-8">
+    <div class="container">
+      <div class="row gy-4 g-md-3 border-bottom pb-8 pb-lg-9 justify-content-center">
+        <div class="col-6 col-md-3">
+          <p class="mb-2 lh-lg ls-1">Company</p>
+          <ul class="list-unstyled text-1100">
+            <li class="mb-1"><a class="ls-1 lh-xl" href="index.html#about">About us</a></li>
+            <li class="mb-1"><a class="ls-1 lh-xl" href="index.html#contact">Contact us</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-md-3">
+          <ul class="list-unstyled text-1100">
+            <li class="mb-1"><a class="ls-1 lh-xl" href="privacypolicy.html">Privacy</a></li>
+            <li class="mb-1"><a class="ls-1 lh-xl" href="termsandcondition.html">Terms &amp; Conditions</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="row gy-2 py-3 justify-content-center justify-content-md-between">
+        <div class="col-auto ps-0">
+          <p class="text-center text-md-start lh-xl text-1100">© <span id="year"></span> Copyright, All Right Reserved, <a class="fw-semi-bold" href="https://ondevtra.com/">Ondevtra Technologies</a> ❤️</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Schema.org Course -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": "Open-Source VLSI Physical Design Roadmap",
+    "description": "A 12-week open-source roadmap covering Yosys, OpenROAD, Magic, and OpenSTA for backend ASIC design—from floorplanning to signoff.",
+    "provider": { "@type": "Organization", "name": "Ondevtra", "sameAs": "https://ondevtra.com" },
+    "image": "https://ondevtra.com/assets/img/illustrations/vlsi-hero.jpg"
+  }
+  </script>
+
+  <script src="vendors/popper/popper.min.js" defer></script>
+  <script src="vendors/bootstrap/bootstrap.min.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const y = document.getElementById('year');
+      if (y) y.textContent = new Date().getFullYear();
+    });
+  </script>
+</body>
+</html>

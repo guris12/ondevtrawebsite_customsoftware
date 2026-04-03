@@ -1,0 +1,20 @@
+# AWS credentials — never commit
+*.csv
+ondevtra-website-deployer_accessKeys.csv
+
+# Sitemap backups (archives, not needed in repo)
+sitemap_*.xml
+sitemap.xml.gz
+
+# Python deploy scripts (local tooling, optional)
+smart_deploy*.py
+smart_deply*.py
+gen_sitemap.py
+manage_sitemap*.py
+
+# Misc
+test.txt
+*.xlsx
+__pycache__/
+*.pyc
+.DS_Store

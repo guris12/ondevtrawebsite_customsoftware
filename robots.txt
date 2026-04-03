@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+Disallow: /assets/video/
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+Sitemap: https://ondevtra.com/sitemap.xml
