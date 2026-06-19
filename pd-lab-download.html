@@ -108,7 +108,7 @@
             A free RTL-to-GDSII OpenROAD flow on your machine. Edit per-stage Tcl, run inside Docker, ask the in-app PD Lab Assistant, and open the OpenROAD GUI in one click.
           </p>
           <p class="text-muted mb-4">
-            Version <span id="pdlab-version">…</span> · macOS signed + notarized · <a href="#downloads" class="text-decoration-none">Jump to downloads</a>
+            Version <span id="pdlab-version">1.0.2</span> · macOS signed + notarized · <a href="#downloads" class="text-decoration-none">Jump to downloads</a>
           </p>
           <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-lg-start">
             <a id="primary-download" class="btn btn-primary btn-lg" href="#downloads">Download for your platform</a>
@@ -129,29 +129,29 @@
       <div class="row justify-content-center">
         <div class="col-lg-9">
           <div class="download-card">
-            <h2 class="mb-3">Download — version <span id="pdlab-version-2">…</span></h2>
-            <p class="text-muted mb-4" id="pdlab-released">Loading release info…</p>
+            <h2 class="mb-3">Download — version <span id="pdlab-version-2">1.0.2</span></h2>
+            <p class="text-muted mb-4" id="pdlab-released">Released 2026-06-19 · macOS DMG signed and notarized by Apple · Linux & Windows shipped as zipped onedir bundles.</p>
 
             <div class="row g-3" id="download-buttons">
               <div class="col-md-12">
-                <a id="dl-mac" class="download-os-btn primary-os" href="#" rel="noopener">
+                <a id="dl-mac" class="download-os-btn primary-os" href="https://d1eo3lqhdigoon.cloudfront.net/v1.0.2/OndevtraPDLab-1.0.2-mac.dmg" rel="noopener">
                   <i class="uil uil-apple"></i> macOS DMG <span class="badge-signed">SIGNED</span>
                 </a>
               </div>
               <div class="col-md-6">
-                <a id="dl-linux" class="download-os-btn alt-os" href="#" rel="noopener">
+                <a id="dl-linux" class="download-os-btn alt-os" href="https://d1eo3lqhdigoon.cloudfront.net/v1.0.2/OndevtraPDLab-linux-amd64.tar.gz" rel="noopener">
                   <i class="uil uil-linux"></i> Linux (x86_64 .tar.gz)
                 </a>
               </div>
               <div class="col-md-6">
-                <a id="dl-win" class="download-os-btn alt-os" href="#" rel="noopener">
+                <a id="dl-win" class="download-os-btn alt-os" href="https://d1eo3lqhdigoon.cloudfront.net/v1.0.2/OndevtraPDLab-win.zip" rel="noopener">
                   <i class="uil uil-windows"></i> Windows (.zip)
                 </a>
               </div>
             </div>
 
             <p class="mt-4 mb-0">
-              <a id="dl-checksums" class="checksum-link" href="#" rel="noopener">SHA256SUMS</a>
+              <a id="dl-checksums" class="checksum-link" href="https://d1eo3lqhdigoon.cloudfront.net/v1.0.2/SHA256SUMS" rel="noopener">SHA256SUMS</a>
               <span class="text-muted">— verify your download with <code>shasum -c SHA256SUMS</code> on macOS/Linux.</span>
             </p>
           </div>
@@ -274,45 +274,56 @@
       const y = document.getElementById('year');
       if (y) y.textContent = new Date().getFullYear();
 
-      // Detect OS for the primary download button
+      // Detect OS for the primary download button. Buttons already have
+      // hardcoded v1.0.2 hrefs (works without JS / on CORS failure); JS
+      // upgrades them from latest.json when the manifest is reachable.
       const ua = navigator.userAgent || navigator.platform || '';
       let primaryOs = 'mac';
       if (/Win/i.test(ua)) primaryOs = 'win';
       else if (/Linux/i.test(ua) && !/Android/i.test(ua)) primaryOs = 'linux';
+
+      // Wire the hero button to the OS-detected download immediately, so
+      // it works even if the latest.json fetch is blocked or slow.
+      const map = { mac: 'dl-mac', linux: 'dl-linux', win: 'dl-win' };
+      const labelMap = { mac: 'Download for macOS', linux: 'Download for Linux', win: 'Download for Windows' };
+      const primaryBtn = document.getElementById('primary-download');
+      const initialHref = document.getElementById(map[primaryOs])?.getAttribute('href');
+      if (primaryBtn && initialHref && initialHref !== '#') {
+        primaryBtn.href = initialHref;
+        primaryBtn.textContent = labelMap[primaryOs] || 'Download';
+      }
 
       const MANIFEST = 'https://d1eo3lqhdigoon.cloudfront.net/latest.json';
       fetch(MANIFEST, { cache: 'no-cache' })
         .then(r => r.ok ? r.json() : Promise.reject(r.status))
         .then(m => {
           const v = m.version || '';
-          document.getElementById('pdlab-version').textContent = v;
-          document.getElementById('pdlab-version-2').textContent = v;
+          if (v) {
+            document.getElementById('pdlab-version').textContent = v;
+            document.getElementById('pdlab-version-2').textContent = v;
+          }
           document.getElementById('pdlab-released').textContent =
             'Released ' + (m.released_at || '—') +
             ' · macOS DMG signed and notarized by Apple · Linux & Windows shipped as zipped onedir bundles.';
 
           if (m.downloads) {
-            document.getElementById('dl-mac').href   = m.downloads.macos   || '#';
-            document.getElementById('dl-linux').href = m.downloads.linux   || '#';
-            document.getElementById('dl-win').href   = m.downloads.windows || '#';
+            if (m.downloads.macos)   document.getElementById('dl-mac').href   = m.downloads.macos;
+            if (m.downloads.linux)   document.getElementById('dl-linux').href = m.downloads.linux;
+            if (m.downloads.windows) document.getElementById('dl-win').href   = m.downloads.windows;
           }
           if (m.sha256sums_url) {
             document.getElementById('dl-checksums').href = m.sha256sums_url;
           }
 
-          const map = { mac: 'dl-mac', linux: 'dl-linux', win: 'dl-win' };
-          const primaryHref = document.getElementById(map[primaryOs])?.href;
-          const primaryBtn = document.getElementById('primary-download');
-          if (primaryBtn && primaryHref && primaryHref !== '#') {
-            primaryBtn.href = primaryHref;
-            const labelMap = { mac: 'Download for macOS', linux: 'Download for Linux', win: 'Download for Windows' };
-            primaryBtn.textContent = labelMap[primaryOs] || 'Download';
+          const refreshedHref = document.getElementById(map[primaryOs])?.getAttribute('href');
+          if (primaryBtn && refreshedHref && refreshedHref !== '#') {
+            primaryBtn.href = refreshedHref;
           }
         })
         .catch(err => {
-          console.error('latest.json fetch failed', err);
-          const fallback = document.getElementById('pdlab-released');
-          if (fallback) fallback.textContent = 'Could not load latest version info — please reload the page.';
+          // Fetch was blocked (CORS) or unreachable — buttons keep their
+          // hardcoded fallback hrefs, so downloads still work.
+          console.warn('latest.json fetch failed; using hardcoded fallback URLs', err);
         });
     });
   </script>
