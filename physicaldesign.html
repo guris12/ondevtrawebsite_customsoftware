@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
   <title>How to Start Learning VLSI Physical Design — Open Source Tools Setup & Roadmap | Ondevtra</title>
-  <link rel="canonical" href="https://ondevtra.com/vlsi-physical-design.html" />
+  <link rel="canonical" href="https://ondevtra.com/physicaldesign.html" />
   <meta name="description" content="Beginner-friendly guide to VLSI Physical Design using free, open-source tools. Install Yosys, OpenROAD, Magic, and OpenSTA; run your first RTL→GDS flow; learn floorplanning, CTS, routing, STA, DRC/LVS and timing closure." />
               <meta name="keywords" content="physical design, VLSI, open source EDA, PnR flow, OpenROAD, chip design, timing closure, Ondevtra" />
 <meta name="robots" content="index,follow,max-image-preview:large" />
@@ -16,7 +16,7 @@
   <meta property="og:title" content="How to Start Learning VLSI Physical Design — Open Source Tools Setup & Roadmap" />
   <meta property="og:description" content="Install open-source EDA tools, understand the PD flow, and ship your first RTL→GDS with this practical guide." />
   <meta property="og:image" content="https://ondevtra.com/assets/img/illustrations/front_pdfscanner.jpg" />
-  <meta property="og:url" content="https://ondevtra.com/vlsi-physical-design.html" />
+  <meta property="og:url" content="https://ondevtra.com/physicaldesign.html" />
   <meta property="og:type" content="article" />
   <meta property="og:site_name" content="Ondevtra" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -80,6 +80,8 @@
   .navbar .nav-link{ color:#000 !important; font-weight:500; }
   .navbar .nav-link:hover,.navbar .nav-link:focus{ color:#ff7a00 !important; }
   .navbar .navbar-brand{ color:#000 !important; font-weight:700; }
+  .hero-section h1,
+  .hero-section .lead{ color:#fff; }
   </style>
 </head>
 
@@ -94,29 +96,12 @@
       </button>
       <div class="collapse navbar-collapse justify-content-md-end" id="navbar-content">                                                        
               <ul class="navbar-nav gap-md-2 gap-lg-3 pt-x1 pb-1 pt-md-0 pb-md-0" data-navbar-nav="data-navbar-nav">
-                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#home">Home</a></li>
-                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#about">About</a></li>
-                <li class="nav-item dropdown">
-                  <a class="nav-link lh-xl" href="#" id="navbarDropdownBlog" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Blog
-                  </a>
-                  <ul class="dropdown-menu" aria-labelledby="navbarDropdownBlog">
-                    <li><a class="dropdown-item" href="ai-business-solutions.html">AI Business Solutions</a></li>
-                    <li><a class="dropdown-item" href="ai-outfit-generator.html">AI Outfit Generator</a></li>
-                    <li><a class="dropdown-item" href="aivoicegenerator.html">AI Voice Generator</a></li>
-                    <li><a class="dropdown-item" href="futurejobs.html">Future Jobs</a></li>
-                    <li><a class="dropdown-item" href="aiquizmaker.html">Quiz Maker</a></li>
-                    <li><a class="dropdown-item" href="webdevelopment.html">Web Development</a></li>
-                    <li><a class="dropdown-item" href="Transcribe.html">Transcribe App</a></li>
-                    <li><a class="dropdown-item" href="SpeechtoTextApp.html">Speech to Text App</a></li>
-                    <li><a class="dropdown-item" href="AIWealth.html">AI and Wealth</a></li>
-                    <li><a class="dropdown-item" href="ChatGPT.html">ChatGPT</a></li>
-                    <li><a class="dropdown-item" href="GenerativeAI.html">Generative AI</a></li>
-                  </ul>
-                </li>
-                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#service">Support</a></li>
-                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#pricing">Pricing</a></li>
-                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#contact">Contact</a></li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html">Home</a></li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#solutions">Solutions</a></li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="index.html#tech-stack">Tech Stack</a></li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="blog.html">Blog</a></li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="apps.html">Products</a></li>
+                <li class="nav-item"> <a class="nav-link lh-xl" href="contact.html">Start a Project</a></li>
               </ul>
             </div>
     </div>
@@ -157,6 +142,21 @@
 
   <!-- Main -->
   <main class="container my-5">
+<!-- PDLAB_DOWNLOAD_CTA_START -->
+  <section class="my-5 p-4 p-md-5 rounded" style="background:linear-gradient(135deg,#fff7ed,#fef3c7);border:1px solid #fcd34d;">
+    <div class="row align-items-center gy-3">
+      <div class="col-md-7">
+        <h3 class="fw-bold mb-2">Try this hands-on with the Ondevtra PD Lab</h3>
+        <p class="mb-3 text-dark">Free desktop launcher for the OpenROAD RTL-to-GDSII flow. Per-stage Tcl editor, in-app PD Lab Assistant, one-click OpenROAD GUI. macOS DMG is signed + notarized; Linux and Windows builds available too.</p>
+        <a class="btn btn-primary btn-lg" href="pd-lab-download.html">Download PD Lab — free</a>
+        <span class="ms-2 text-muted small">Mac · Linux · Windows</span>
+      </div>
+      <div class="col-md-5 text-center">
+        <img class="img-fluid rounded shadow" src="assets/img/pdlab/pd-lab-rtl-stage-thumb.jpg" alt="Ondevtra PD Lab — RTL stage view" loading="lazy" style="max-height:220px" />
+      </div>
+    </div>
+  </section>
+<!-- PDLAB_DOWNLOAD_CTA_END -->
     <div class="row">
       <!-- TOC -->
       <aside class="col-lg-3 mb-4 mb-lg-0">
@@ -437,7 +437,36 @@ report_checks -path_delay min_max -fields {slew capacitance} -digits 3
 
       </article>
     </div>
+  <!-- PDLAB_SCREENSHOT_START -->
+  <figure class="my-5 text-center">
+    <img class="img-fluid rounded shadow" src="assets/img/pdlab/pd-lab-rtl-stage.jpg" alt="Ondevtra PD Lab — RTL stage view" loading="lazy" style="max-width:100%;max-height:540px;" />
+    <figcaption class="mt-2 text-muted small">Ondevtra PD Lab Launcher running the Sky130 GCD design — stage pills, Tcl editor, and PD Lab Assistant. <a href="pd-lab-download.html" class="ms-2">Try it yourself →</a></figcaption>
+  </figure>
+<!-- PDLAB_SCREENSHOT_END -->
   </main>
+
+  <!-- Join the Next Batch -->
+  <section class="py-6" id="join-next-batch">
+    <div class="container">
+      <div class="row justify-content-center text-center mb-4">
+        <div class="col-12 col-lg-8">
+          <h2 class="fs-4 fw-bold mb-3">Join the Next Batch</h2>
+          <p class="fs-8 lh-lg mb-0">Submit your email to get notified when the next cohort starts. You'll also receive free VLSI learning resources and lab previews.</p>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-12 col-lg-6">
+          <form action="https://formspree.io/f/mzdkegya" method="POST" class="d-flex flex-column flex-sm-row gap-3">
+            <input type="hidden" name="_subject" value="VLSI Training - Next Batch Interest">
+            <input type="email" name="email" class="form-control form-control-lg" placeholder="Your email address" required>
+            <button type="submit" class="btn btn-lg btn-warning text-dark fw-semibold text-nowrap">Notify Me</button>
+          </form>
+          <p class="small text-muted mt-2 text-center">No spam — only batch announcements and free resources.</p>
+          <p class="small text-center mt-3">Or email us directly: <a href="mailto:hello@ondevtra.com" class="fw-semibold text-warning">hello@ondevtra.com</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- Contact -->
   <section class="bg-300 position-relative z-0" id="contact">
@@ -580,8 +609,8 @@ report_checks -path_delay min_max -fields {slew capacitance} -digits 3
         <div class="col-6 col-md-3">
           <p class="mb-2 lh-lg ls-1">Company</p>
           <ul class="list-unstyled text-1100">
-            <li class="mb-1"><a class="ls-1 lh-xl" href="index.html#about">About us</a></li>
-            <li class="mb-1"><a class="ls-1 lh-xl" href="index.html#contact">Contact us</a></li>
+            <li class="mb-1"><a class="ls-1 lh-xl" href="index.html#solutions">Solutions</a></li>
+            <li class="mb-1"><a class="ls-1 lh-xl" href="contact.html">Contact us</a></li>
           </ul>
         </div>
         <div class="col-6 col-md-3">
@@ -597,6 +626,8 @@ report_checks -path_delay min_max -fields {slew capacitance} -digits 3
         </div>
       </div>
     </div>
+        <div class="row py-2 justify-content-center"><div class="col-auto"><p class="text-center lh-xl text-1100" style="font-size:13px;opacity:.7;">Manyata Embassy Business Park, Outer Ring Road, Bangalore 560045, Karnataka, India</p></div></div>
+    </div>
   </footer>
 
   <!-- Structured data -->
@@ -611,7 +642,7 @@ report_checks -path_delay min_max -fields {slew capacitance} -digits 3
     "publisher":{"@type":"Organization","name":"Ondevtra AI","logo":{"@type":"ImageObject","url":"https://ondevtra.com/assets/img/favicons/favicon-32x32.png"}},
     "datePublished":"2025-08-27",
     "dateModified":"2025-08-27",
-    "mainEntityOfPage":{"@type":"WebPage","@id":"https://ondevtra.com/vlsi-physical-design.html"}
+    "mainEntityOfPage":{"@type":"WebPage","@id":"https://ondevtra.com/physicaldesign.html"}
   }
   </script>
 
