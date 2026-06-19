@@ -177,7 +177,7 @@
     <div class="container">
       <div class="row align-items-center g-5 pt-5 pt-lg-0">
         <div class="col-lg-6">
-          <span class="badge hero-chip mb-3" style="background:rgba(250,204,21,.18);color:#facc15;font-size:.8rem;padding:.45rem .85rem;border-radius:999px;border:1px solid rgba(250,204,21,.45);">Free desktop launcher · v<span id="pdlab-version">1.0.7</span></span>
+          <span class="badge hero-chip mb-3" style="background:rgba(250,204,21,.18);color:#facc15;font-size:.8rem;padding:.45rem .85rem;border-radius:999px;border:1px solid rgba(250,204,21,.45);">Free desktop launcher · v<span id="pdlab-version">1.0.8</span></span>
           <h1 class="display-4 fw-bold mb-3">Ondevtra PD Lab &mdash; RTL-to-GDSII on Your Desktop</h1>
           <p class="lead mb-4">A complete OpenROAD flow on your machine. Edit per-stage Tcl in Monaco, run inside Docker, ask the in-app PD Lab Assistant, and open the OpenROAD GUI in one click.</p>
           <div class="d-flex flex-wrap mb-4">
@@ -206,29 +206,29 @@
       <div class="row justify-content-center">
         <div class="col-lg-9">
           <div class="download-panel">
-            <h2 class="mb-3">Download &mdash; version <span id="pdlab-version-2">1.0.7</span></h2>
+            <h2 class="mb-3">Download &mdash; version <span id="pdlab-version-2">1.0.8</span></h2>
             <p class="mb-4" id="pdlab-released" style="color:#cbd5f5;">Released 2026-06-19 &middot; macOS DMG signed and notarized by Apple &middot; Linux &amp; Windows shipped as zipped onedir bundles.</p>
 
             <div class="row g-3" id="download-buttons">
               <div class="col-md-12">
-                <a id="dl-mac" class="download-os-btn primary-os" href="https://d1eo3lqhdigoon.cloudfront.net/v1.0.7/OndevtraPDLab-1.0.7-mac.dmg" rel="noopener">
+                <a id="dl-mac" class="download-os-btn primary-os" href="https://d1eo3lqhdigoon.cloudfront.net/v1.0.8/OndevtraPDLab-1.0.8-mac.dmg" rel="noopener">
                   <i class="uil uil-apple"></i> macOS DMG <span class="badge-signed">SIGNED</span>
                 </a>
               </div>
               <div class="col-md-6">
-                <a id="dl-linux" class="download-os-btn alt-os" href="https://d1eo3lqhdigoon.cloudfront.net/v1.0.7/OndevtraPDLab-linux-amd64.tar.gz" rel="noopener">
+                <a id="dl-linux" class="download-os-btn alt-os" href="https://d1eo3lqhdigoon.cloudfront.net/v1.0.8/OndevtraPDLab-linux-amd64.tar.gz" rel="noopener">
                   <i class="uil uil-linux"></i> Linux (x86_64 .tar.gz)
                 </a>
               </div>
               <div class="col-md-6">
-                <a id="dl-win" class="download-os-btn alt-os" href="https://d1eo3lqhdigoon.cloudfront.net/v1.0.7/OndevtraPDLab-win.zip" rel="noopener">
+                <a id="dl-win" class="download-os-btn alt-os" href="https://d1eo3lqhdigoon.cloudfront.net/v1.0.8/OndevtraPDLab-win.zip" rel="noopener">
                   <i class="uil uil-windows"></i> Windows (.zip)
                 </a>
               </div>
             </div>
 
             <p class="mt-4 mb-0">
-              <a id="dl-checksums" class="checksum-link" href="https://d1eo3lqhdigoon.cloudfront.net/v1.0.7/SHA256SUMS" rel="noopener">SHA256SUMS</a>
+              <a id="dl-checksums" class="checksum-link" href="https://d1eo3lqhdigoon.cloudfront.net/v1.0.8/SHA256SUMS" rel="noopener">SHA256SUMS</a>
               <span style="color:#94a3b8;">&mdash; verify your download with <code style="color:#fde68a;background:rgba(15,23,42,.55);padding:.1rem .35rem;border-radius:6px;">shasum -c SHA256SUMS</code> on macOS/Linux.</span>
             </p>
           </div>
@@ -357,7 +357,7 @@
     "applicationCategory":"DeveloperApplication",
     "operatingSystem":"macOS, Linux, Windows",
     "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
-    "softwareVersion":"1.0.7",
+    "softwareVersion":"1.0.8",
     "downloadUrl":"https://d1eo3lqhdigoon.cloudfront.net/latest.json",
     "description":"Free desktop launcher for the OpenROAD-Flow-Scripts RTL-to-GDSII flow with per-stage Tcl editing, an in-app physical design assistant, and one-click OpenROAD GUI."
   }
@@ -371,7 +371,7 @@
       if (y) y.textContent = new Date().getFullYear();
 
       // Detect OS for the primary download button. Buttons already have
-      // hardcoded v1.0.7 hrefs (works without JS / on CORS failure); JS
+      // hardcoded v1.0.8 hrefs (works without JS / on CORS failure); JS
       // upgrades them from latest.json when the manifest is reachable.
       const ua = navigator.userAgent || navigator.platform || '';
       let primaryOs = 'mac';
